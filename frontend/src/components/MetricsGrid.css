@@ -1,64 +1,86 @@
-.metrics-cards {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: var(--spacing-md);
+.metrics-grid-container {
+    display: flex;
+    flex-direction: column;
 }
 
-@media (max-width: 1024px) {
-    .metrics-cards {
+.metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-4);
+}
+
+@media (max-width: 1200px) {
+    .metrics-grid {
         grid-template-columns: repeat(2, 1fr);
     }
 }
 
-@media (max-width: 640px) {
-    .metrics-cards {
+@media (max-width: 600px) {
+    .metrics-grid {
         grid-template-columns: 1fr;
     }
 }
 
 .metric-card {
-    background: var(--bg-tertiary);
-    border-radius: var(--radius-lg);
-    padding: var(--spacing-md);
+    padding: var(--space-5);
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    transition: all var(--transition-fast);
+}
+
+.metric-card:hover {
+    border-color: var(--border-light);
 }
 
 .metric-card-header {
     display: flex;
     align-items: center;
-    gap: var(--spacing-sm);
-    font-weight: 600;
-    margin-bottom: var(--spacing-md);
+    gap: var(--space-3);
+    margin-bottom: var(--space-4);
 }
 
 .metric-icon {
-    width: 32px;
-    height: 32px;
+    width: 36px;
+    height: 36px;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: var(--accent-gradient);
-    border-radius: var(--radius-md);
-    font-size: 1rem;
+    background: var(--bg-frosted);
+    border-radius: var(--radius-sm);
+}
+
+.metric-icon svg {
+    width: 18px;
+    height: 18px;
+    stroke: var(--accent-blue);
+}
+
+.metric-card-header h4 {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-primary);
 }
 
 .metric-stats {
     display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+
+.metric-stat {
+    display: flex;
     justify-content: space-between;
-    gap: var(--spacing-sm);
+    align-items: center;
 }
 
-.stat {
-    text-align: center;
-}
-
-.stat-value {
-    display: block;
-    font-size: 1.1rem;
-    font-weight: 700;
+.metric-stat-value {
+    font-size: 1rem;
+    font-weight: 600;
     color: var(--text-primary);
 }
 
-.stat-label {
-    font-size: 0.7rem;
+.metric-stat-label {
+    font-size: 0.75rem;
     color: var(--text-muted);
 }

@@ -1,29 +1,49 @@
-.trend-chart .chart-container {
+.trend-chart {
     display: flex;
     flex-direction: column;
-    align-items: center;
+}
+
+.chart-container {
+    flex: 1;
+    min-height: 200px;
 }
 
 .chart-legend {
     display: flex;
-    gap: var(--spacing-lg);
-    margin-top: var(--spacing-sm);
-}
-
-.legend-item {
-    display: flex;
     align-items: center;
-    gap: var(--spacing-xs);
+    gap: var(--space-2);
     font-size: 0.75rem;
+    color: var(--text-muted);
 }
 
-.legend-color {
-    width: 10px;
-    height: 10px;
-    border-radius: 2px;
+.legend-dot {
+    width: 8px;
+    height: 8px;
+    background: var(--accent-blue);
+    border-radius: 50%;
 }
 
-.legend-value {
-    font-weight: 600;
+.chart-tooltip {
+    background: var(--bg-elevated);
+    backdrop-filter: blur(var(--blur-amount));
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-md);
+    padding: var(--space-3) var(--space-4);
+    box-shadow: var(--shadow-lg);
+}
+
+.tooltip-label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-bottom: var(--space-1);
+}
+
+.tooltip-value {
+    font-size: 0.8125rem;
     color: var(--text-secondary);
+}
+
+.tooltip-value strong {
+    color: var(--text-primary);
+    font-weight: 600;
 }

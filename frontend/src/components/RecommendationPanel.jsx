@@ -1,13 +1,30 @@
-import { useState } from 'react';
 import './RecommendationPanel.css';
 
+const PriorityIcon = ({ priority }) => {
+    if (priority === 'high') {
+        return (
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M12 19V5M5 12l7-7 7 7" />
+            </svg>
+        );
+    }
+    if (priority === 'medium') {
+        return (
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <circle cx="12" cy="12" r="1" />
+                <circle cx="12" cy="5" r="1" />
+                <circle cx="12" cy="19" r="1" />
+            </svg>
+        );
+    }
+    return (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M12 5v14M5 12l7 7 7-7" />
+        </svg>
+    );
+};
+
 function RecommendationPanel({ recommendations }) {
-    const [expanded, setExpanded] = useState({});
-
-    const toggleExpand = (id) => {
-        setExpanded((prev) => ({ ...prev, [id]: !prev[id] }));
-    };
-
     if (!recommendations || recommendations.length === 0) {
         return (
             <div className="card recommendation-panel">
@@ -21,46 +38,44 @@ function RecommendationPanel({ recommendations }) {
         );
     }
 
+    const getPriorityClass = (priority) => {
+        if (priority === 'high') return 'high';
+        if (priority === 'medium') return 'medium';
+        return 'low';
+    };
+
     return (
         <div className="card recommendation-panel">
             <div className="card-header">
-                <h3 className="card-title">AI Recommendations</h3>
+                <h3 className="card-title">Recommendations</h3>
                 <span className="badge">{recommendations.length} actions</span>
             </div>
-            <div className="recommendation-items">
+
+            <div className="recommendation-list">
                 {recommendations.map((rec, index) => (
-                    <div
-                        key={rec.id || index}
-                        className={`recommendation-item priority-${rec.priority}`}
-                    >
-                        <div
-                            className="recommendation-header"
-                            onClick={() => toggleExpand(rec.id || index)}
-                        >
-                            <div className="recommendation-info">
-                                <span className="priority-indicator"></span>
-                                <div>
-                                    <h4>{rec.title}</h4>
-                                    <p className="related-bottleneck">{rec.related_bottleneck}</p>
-                                </div>
-                            </div>
-                            <span className="expand-icon">{expanded[rec.id || index] ? '−' : '+'}</span>
+                    <div key={index} className="recommendation-item">
+                        <div className={`priority-indicator ${getPriorityClass(rec.priority)}`}>
+                            <PriorityIcon priority={rec.priority} />
                         </div>
-                        {expanded[rec.id || index] && rec.actions && (
-                            <div className="recommendation-actions">
-                                <h5>Suggested Actions:</h5>
-                                {rec.actions.map((action, i) => (
-                                    <div key={i} className="action-item">
-                                        <span className="action-icon">
-                                            {action.type === 'create_jira_ticket' && '📋'}
-                                            {action.type === 'slack_message' && '💬'}
-                                            {action.type === 'schedule_meeting' && '📅'}
-                                        </span>
-                                        <span>{action.description}</span>
-                                    </div>
-                                ))}
-                            </div>
-                        )}
+                        <div className="recommendation-content">
+                            <h4 className="recommendation-title">{rec.title}</h4>
+                            <p className="recommendation-related">
+                                Related: {rec.related_bottleneck}
+                            </p>
+                            {rec.actions && rec.actions.length > 0 && (
+                                <ul className="action-list">
+                                    {rec.actions.slice(0, 2).map((action, i) => (
+                                        <li key={i} className="action-item">
+                                            <span className="action-type">{action.type}</span>
+                                            <span className="action-description">{action.description}</span>
+                                        </li>
+                                    ))}
+                                </ul>
+                            )}
+                        </div>
+                        <div className={`priority-badge ${getPriorityClass(rec.priority)}`}>
+                            {rec.priority}
+                        </div>
                     </div>
                 ))}
             </div>

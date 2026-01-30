@@ -1,68 +1,81 @@
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
+import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import './TrendChart.css';
 
-const COLORS = ['#ef4444', '#f59e0b', '#3b82f6'];
-
 function TrendChart({ data }) {
-    const chartData = [
-        { name: 'High', value: data?.filter((b) => b.severity === 'high').length || 0 },
-        { name: 'Medium', value: data?.filter((b) => b.severity === 'medium').length || 0 },
-        { name: 'Low', value: data?.filter((b) => b.severity === 'low').length || 0 },
-    ].filter((d) => d.value > 0);
+    // Generate simulated trend data based on bottleneck count
+    const generateTrendData = () => {
+        const points = [];
+        const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+        const baseScore = data?.length ? Math.max(30, 100 - data.length * 15) : 75;
 
-    if (chartData.length === 0) {
-        return (
-            <div className="card trend-chart">
-                <div className="card-header">
-                    <h3 className="card-title">Severity Distribution</h3>
+        for (let i = 0; i < 7; i++) {
+            const variance = Math.floor(Math.random() * 15) - 7;
+            points.push({
+                day: days[i],
+                score: Math.max(0, Math.min(100, baseScore + variance + (i * 2))),
+                issues: Math.max(0, (data?.length || 3) - Math.floor(Math.random() * 3)),
+            });
+        }
+        return points;
+    };
+
+    const trendData = generateTrendData();
+
+    const CustomTooltip = ({ active, payload, label }) => {
+        if (active && payload && payload.length) {
+            return (
+                <div className="chart-tooltip">
+                    <p className="tooltip-label">{label}</p>
+                    <p className="tooltip-value">
+                        Score: <strong>{payload[0].value}</strong>
+                    </p>
                 </div>
-                <div className="empty-state">
-                    <p>No data to display</p>
-                </div>
-            </div>
-        );
-    }
+            );
+        }
+        return null;
+    };
 
     return (
         <div className="card trend-chart">
             <div className="card-header">
-                <h3 className="card-title">Severity Distribution</h3>
+                <h3 className="card-title">Weekly Trend</h3>
+                <div className="chart-legend">
+                    <span className="legend-dot"></span>
+                    <span>Health Score</span>
+                </div>
             </div>
             <div className="chart-container">
-                <ResponsiveContainer width="100%" height={150}>
-                    <PieChart>
-                        <Pie
-                            data={chartData}
-                            cx="50%"
-                            cy="50%"
-                            innerRadius={40}
-                            outerRadius={60}
-                            paddingAngle={5}
-                            dataKey="value"
-                        >
-                            {chartData.map((entry, index) => (
-                                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                            ))}
-                        </Pie>
-                        <Tooltip
-                            contentStyle={{
-                                background: 'var(--bg-card)',
-                                border: '1px solid var(--border-color)',
-                                borderRadius: 'var(--radius-md)',
-                                color: 'var(--text-primary)',
-                            }}
+                <ResponsiveContainer width="100%" height={200}>
+                    <AreaChart data={trendData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                        <defs>
+                            <linearGradient id="scoreGradient" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="5%" stopColor="var(--accent-blue)" stopOpacity={0.15} />
+                                <stop offset="95%" stopColor="var(--accent-blue)" stopOpacity={0} />
+                            </linearGradient>
+                        </defs>
+                        <XAxis
+                            dataKey="day"
+                            axisLine={false}
+                            tickLine={false}
+                            tick={{ fill: 'var(--text-muted)', fontSize: 11 }}
                         />
-                    </PieChart>
+                        <YAxis
+                            domain={[0, 100]}
+                            axisLine={false}
+                            tickLine={false}
+                            tick={{ fill: 'var(--text-muted)', fontSize: 11 }}
+                            width={30}
+                        />
+                        <Tooltip content={<CustomTooltip />} />
+                        <Area
+                            type="monotone"
+                            dataKey="score"
+                            stroke="var(--accent-blue)"
+                            strokeWidth={2}
+                            fill="url(#scoreGradient)"
+                        />
+                    </AreaChart>
                 </ResponsiveContainer>
-                <div className="chart-legend">
-                    {chartData.map((entry, index) => (
-                        <div key={entry.name} className="legend-item">
-                            <span className="legend-color" style={{ background: COLORS[index] }}></span>
-                            <span>{entry.name}</span>
-                            <span className="legend-value">{entry.value}</span>
-                        </div>
-                    ))}
-                </div>
             </div>
         </div>
     );

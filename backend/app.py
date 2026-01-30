@@ -96,6 +96,12 @@ def a2a_agent_card():
     })
 
 
+@app.route("/", methods=["POST"])
+def root_post():
+    """Handle POST to root - Orchestrate sends A2A requests here"""
+    return a2a_task_send()
+
+
 @app.route("/a2a/tasks/send", methods=["POST"])
 def a2a_task_send():
     """A2A Task Endpoint - receives and processes tasks from Orchestrate"""
@@ -105,16 +111,40 @@ def a2a_task_send():
         return jsonify({"error": "Invalid API key"}), 401
     
     body = request.get_json() or {}
+    
+    # Log incoming request for debugging
+    print(f"📨 A2A Request received: {body}")
+    
     task_id = body.get("id", str(uuid.uuid4()))
-    message = body.get("message", {})
     user_content = ""
     
-    # Extract user message
+    # Try multiple ways to extract the user message
+    # Method 1: A2A standard format
+    message = body.get("message", {})
     if "parts" in message:
         for part in message.get("parts", []):
             if part.get("type") == "text":
-                user_content = part.get("text", "").lower()
+                user_content = part.get("text", "")
                 break
+    
+    # Method 2: Direct content field
+    if not user_content:
+        user_content = body.get("content", "")
+    
+    # Method 3: Input field
+    if not user_content:
+        user_content = body.get("input", "")
+    
+    # Method 4: Query field
+    if not user_content:
+        user_content = body.get("query", "")
+    
+    # Method 5: Text field
+    if not user_content:
+        user_content = body.get("text", "")
+    
+    print(f"📝 Extracted user content: {user_content}")
+    user_content = user_content.lower()
     
     # Process the request based on content
     watsonx = get_watsonx_client()
@@ -165,9 +195,11 @@ def a2a_task_send():
         response_text += "- **GitHub/Jira data** - View specific metrics\n\n"
         response_text += "What would you like to know?"
     
+    # Return response in multiple formats for compatibility
     return jsonify({
         "id": task_id,
         "status": "completed",
+        # A2A standard format
         "result": {
             "parts": [
                 {
@@ -175,7 +207,20 @@ def a2a_task_send():
                     "text": response_text
                 }
             ]
-        }
+        },
+        # Alternative formats Orchestrate might expect
+        "output": response_text,
+        "message": {
+            "role": "assistant",
+            "content": response_text,
+            "parts": [
+                {
+                    "type": "text", 
+                    "text": response_text
+                }
+            ]
+        },
+        "response": response_text
     })
 
 

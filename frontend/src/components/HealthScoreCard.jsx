@@ -6,7 +6,7 @@ function HealthScoreCard({ score, status, trends }) {
 
     useEffect(() => {
         let start = 0;
-        const duration = 1500;
+        const duration = 1200;
         const increment = score / (duration / 16);
 
         const timer = setInterval(() => {
@@ -22,7 +22,7 @@ function HealthScoreCard({ score, status, trends }) {
         return () => clearInterval(timer);
     }, [score]);
 
-    const circumference = 2 * Math.PI * 45;
+    const circumference = 2 * Math.PI * 54;
     const strokeDashoffset = circumference - (animatedScore / 100) * circumference;
 
     const getStatusColor = () => {
@@ -31,25 +31,44 @@ function HealthScoreCard({ score, status, trends }) {
         return 'var(--status-error)';
     };
 
+    const getStatusLabel = () => {
+        if (status === 'healthy') return 'Healthy';
+        if (status === 'warning') return 'Needs Attention';
+        return 'Critical';
+    };
+
     return (
         <div className="card health-score-card">
             <div className="card-header">
-                <h3 className="card-title">Team Health Score</h3>
+                <h3 className="card-title">Team Health</h3>
                 {trends && (
-                    <span className={`trend ${trends.health_score_change >= 0 ? 'up' : 'down'}`}>
-                        {trends.health_score_change >= 0 ? '↗' : '↘'} {Math.abs(trends.health_score_change)}%
-                    </span>
+                    <div className={`trend-badge ${trends.health_score_change >= 0 ? 'positive' : 'negative'}`}>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            {trends.health_score_change >= 0 ? (
+                                <path d="M7 17l5-5 5 5M7 7l5 5 5-5" />
+                            ) : (
+                                <path d="M7 7l5 5 5-5M7 17l5-5 5 5" />
+                            )}
+                        </svg>
+                        <span>{Math.abs(trends.health_score_change)}%</span>
+                    </div>
                 )}
             </div>
+
             <div className="health-score-content">
-                <div className="score-ring">
-                    <svg viewBox="0 0 100 100">
-                        <circle className="ring-bg" cx="50" cy="50" r="45" />
+                <div className="score-ring-container">
+                    <svg className="score-ring" viewBox="0 0 120 120">
+                        <circle
+                            className="ring-bg"
+                            cx="60"
+                            cy="60"
+                            r="54"
+                        />
                         <circle
                             className="ring-progress"
-                            cx="50"
-                            cy="50"
-                            r="45"
+                            cx="60"
+                            cy="60"
+                            r="54"
                             style={{
                                 strokeDasharray: circumference,
                                 strokeDashoffset,
@@ -59,11 +78,16 @@ function HealthScoreCard({ score, status, trends }) {
                     </svg>
                     <div className="score-value">
                         <span className="score-number">{animatedScore}</span>
-                        <span className="score-max">/100</span>
+                        <span className="score-label">/ 100</span>
                     </div>
                 </div>
-                <div className={`status-badge ${status}`}>
-                    {status === 'healthy' ? '✓ Healthy' : status === 'warning' ? '⚠ Warning' : '✗ Critical'}
+
+                <div
+                    className="status-indicator"
+                    style={{ '--status-color': getStatusColor() }}
+                >
+                    <span className="status-dot" style={{ background: getStatusColor() }}></span>
+                    <span>{getStatusLabel()}</span>
                 </div>
             </div>
         </div>

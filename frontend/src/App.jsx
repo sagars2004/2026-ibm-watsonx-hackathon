@@ -5,6 +5,35 @@ import LoadingOverlay from './components/LoadingOverlay';
 
 const API_BASE = 'http://localhost:5001/api';
 
+// SVG Icons as components
+const Icons = {
+    Search: () => (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <circle cx="11" cy="11" r="8" />
+            <path d="m21 21-4.35-4.35" />
+        </svg>
+    ),
+    Refresh: () => (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8" />
+            <path d="M21 3v5h-5" />
+        </svg>
+    ),
+    AlertCircle: () => (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <circle cx="12" cy="12" r="10" />
+            <line x1="12" y1="8" x2="12" y2="12" />
+            <line x1="12" y1="16" x2="12.01" y2="16" />
+        </svg>
+    ),
+    X: () => (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+        </svg>
+    ),
+};
+
 function App() {
     const [analysis, setAnalysis] = useState(null);
     const [metrics, setMetrics] = useState(null);
@@ -69,17 +98,27 @@ function App() {
         loadInitialData();
     }, [fetchMetrics]);
 
+    const formatTime = (date) => {
+        return date.toLocaleTimeString('en-US', {
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: true
+        });
+    };
+
     return (
         <div className="app">
             <header className="header">
                 <div className="header-logo">
-                    <div className="logo-icon">🔍</div>
+                    <div className="logo-icon">
+                        <Icons.Search />
+                    </div>
                     <div>
                         <h1>Silent Bottleneck Detector</h1>
                         <p className="last-updated">
                             {lastUpdated
-                                ? `Last updated: ${lastUpdated.toLocaleTimeString()}`
-                                : 'Not yet analyzed'}
+                                ? `Updated ${formatTime(lastUpdated)}`
+                                : 'Awaiting analysis'}
                         </p>
                     </div>
                 </div>
@@ -92,10 +131,13 @@ function App() {
                         {isLoading ? (
                             <>
                                 <span className="loading-spinner"></span>
-                                Analyzing...
+                                Analyzing
                             </>
                         ) : (
-                            <>🔄 Run Analysis</>
+                            <>
+                                <Icons.Refresh />
+                                Run Analysis
+                            </>
                         )}
                     </button>
                 </div>
@@ -103,13 +145,13 @@ function App() {
 
             {error && (
                 <div className="error-banner">
-                    <span className="error-icon">⚠️</span>
+                    <Icons.AlertCircle className="error-icon" />
                     <div className="error-content">
                         <strong>Analysis Error</strong>
                         <p>{error}</p>
                     </div>
-                    <button className="btn btn-ghost" onClick={() => setError(null)}>
-                        ✕
+                    <button className="btn-ghost" onClick={() => setError(null)}>
+                        <Icons.X />
                     </button>
                 </div>
             )}
@@ -121,12 +163,9 @@ function App() {
             </main>
 
             <footer className="footer">
-                <p>
-                    Built with <span className="heart">❤️</span> for the IBM watsonx
-                    Hackathon 2026
-                </p>
+                <p>Built for IBM watsonx Hackathon 2026</p>
                 <p className="footer-tech">
-                    Powered by watsonx.ai • watsonx Orchestrate • Cloudant
+                    Powered by watsonx.ai · watsonx Orchestrate · IBM Cloudant
                 </p>
             </footer>
         </div>

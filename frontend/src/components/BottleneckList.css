@@ -1,50 +1,69 @@
 .bottleneck-list {
-    max-height: 500px;
-    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
 }
 
 .bottleneck-items {
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-md);
+    gap: var(--space-3);
+    overflow-y: auto;
+    max-height: 400px;
 }
 
 .bottleneck-item {
     display: flex;
-    gap: var(--spacing-md);
-    padding: var(--spacing-md);
-    background: var(--bg-tertiary);
-    border-radius: var(--radius-lg);
-    border-left: 3px solid transparent;
+    gap: var(--space-4);
+    padding: var(--space-4);
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
     transition: all var(--transition-fast);
 }
 
 .bottleneck-item:hover {
-    background: var(--bg-card-hover);
-}
-
-.bottleneck-item.severity-high {
-    border-left-color: var(--status-error);
-}
-
-.bottleneck-item.severity-medium {
-    border-left-color: var(--status-warning);
-}
-
-.bottleneck-item.severity-low {
-    border-left-color: var(--status-info);
+    border-color: var(--border-light);
+    transform: translateX(4px);
 }
 
 .bottleneck-icon {
-    font-size: 1.5rem;
     width: 40px;
     height: 40px;
+    flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: var(--bg-secondary);
     border-radius: var(--radius-md);
-    flex-shrink: 0;
+    background: var(--bg-frosted);
+}
+
+.bottleneck-icon svg {
+    width: 20px;
+    height: 20px;
+}
+
+.bottleneck-icon.error {
+    background: rgba(239, 68, 68, 0.1);
+}
+
+.bottleneck-icon.error svg {
+    stroke: var(--status-error);
+}
+
+.bottleneck-icon.warning {
+    background: rgba(234, 179, 8, 0.1);
+}
+
+.bottleneck-icon.warning svg {
+    stroke: var(--status-warning);
+}
+
+.bottleneck-icon.info {
+    background: rgba(59, 130, 246, 0.1);
+}
+
+.bottleneck-icon.info svg {
+    stroke: var(--status-info);
 }
 
 .bottleneck-content {
@@ -56,67 +75,65 @@
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    gap: var(--spacing-sm);
-    margin-bottom: var(--spacing-xs);
+    gap: var(--space-3);
+    margin-bottom: var(--space-2);
 }
 
-.bottleneck-header h4 {
-    font-size: 0.9rem;
-    font-weight: 600;
+.bottleneck-title {
+    font-size: 0.9375rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    line-height: 1.3;
 }
 
 .severity-badge {
-    padding: 2px 8px;
-    border-radius: var(--radius-full);
-    font-size: 0.65rem;
+    flex-shrink: 0;
+    padding: var(--space-1) var(--space-2);
+    border-radius: var(--radius-sm);
+    font-size: 0.6875rem;
     font-weight: 600;
     text-transform: uppercase;
+    letter-spacing: 0.04em;
 }
 
-.severity-badge.high {
+.severity-badge.error {
     background: rgba(239, 68, 68, 0.15);
     color: var(--status-error);
 }
 
-.severity-badge.medium {
-    background: rgba(245, 158, 11, 0.15);
+.severity-badge.warning {
+    background: rgba(234, 179, 8, 0.15);
     color: var(--status-warning);
 }
 
-.severity-badge.low {
+.severity-badge.info {
     background: rgba(59, 130, 246, 0.15);
     color: var(--status-info);
 }
 
 .bottleneck-description {
-    font-size: 0.8rem;
+    font-size: 0.8125rem;
     color: var(--text-secondary);
-    margin-bottom: var(--spacing-sm);
+    line-height: 1.5;
+    margin-bottom: var(--space-3);
 }
 
 .bottleneck-metric {
-    display: flex;
+    display: inline-flex;
     align-items: baseline;
-    gap: var(--spacing-sm);
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-3);
+    background: var(--bg-frosted);
+    border-radius: var(--radius-sm);
 }
 
 .metric-value {
-    font-size: 1.1rem;
-    font-weight: 700;
-    background: var(--accent-gradient);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-primary);
 }
 
 .metric-label {
     font-size: 0.75rem;
     color: var(--text-muted);
-}
-
-.badge {
-    padding: 4px 10px;
-    background: var(--bg-tertiary);
-    border-radius: var(--radius-full);
-    font-size: 0.75rem;
-    color: var(--text-secondary);
 }
