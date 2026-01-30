@@ -1,146 +1,127 @@
-.recommendation-list {
+.recommendation-panel {
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.recommendation-items {
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-md);
+    gap: var(--spacing-sm);
 }
 
 .recommendation-item {
     background: var(--bg-tertiary);
     border-radius: var(--radius-lg);
-    border: 1px solid var(--border-color);
     overflow: hidden;
-    transition: all var(--transition-fast);
+    border-left: 3px solid transparent;
 }
 
-.recommendation-item:hover {
-    border-color: var(--border-color-hover);
+.recommendation-item.priority-high {
+    border-left-color: var(--status-error);
 }
 
-.recommendation-item.expanded {
-    border-color: var(--accent-primary);
-    box-shadow: 0 0 20px rgba(99, 102, 241, 0.1);
+.recommendation-item.priority-medium {
+    border-left-color: var(--status-warning);
+}
+
+.recommendation-item.priority-low {
+    border-left-color: var(--status-info);
 }
 
 .recommendation-header {
     display: flex;
-    align-items: center;
     justify-content: space-between;
+    align-items: center;
     padding: var(--spacing-md);
     cursor: pointer;
+    transition: background var(--transition-fast);
 }
 
-.recommendation-main {
+.recommendation-header:hover {
+    background: var(--bg-card-hover);
+}
+
+.recommendation-info {
     display: flex;
-    align-items: center;
-    gap: var(--spacing-md);
-    flex: 1;
+    align-items: flex-start;
+    gap: var(--spacing-sm);
 }
 
 .priority-indicator {
     width: 8px;
     height: 8px;
     border-radius: 50%;
+    margin-top: 6px;
     flex-shrink: 0;
 }
 
-.priority-indicator.high {
+.priority-high .priority-indicator {
     background: var(--status-error);
-    box-shadow: 0 0 8px var(--status-error);
 }
 
-.priority-indicator.medium {
+.priority-medium .priority-indicator {
     background: var(--status-warning);
-    box-shadow: 0 0 8px var(--status-warning);
 }
 
-.priority-indicator.low {
+.priority-low .priority-indicator {
     background: var(--status-info);
-    box-shadow: 0 0 8px var(--status-info);
 }
 
-.recommendation-info {
-    flex: 1;
-}
-
-.recommendation-title {
-    font-size: 0.9375rem;
+.recommendation-info h4 {
+    font-size: 0.875rem;
     font-weight: 600;
-    margin-bottom: 2px;
 }
 
-.recommendation-related {
+.related-bottleneck {
     font-size: 0.75rem;
     color: var(--text-muted);
+    margin-top: 2px;
 }
 
-.expand-btn {
-    width: 28px;
-    height: 28px;
-    border-radius: var(--radius-md);
-    background: var(--bg-secondary);
-    border: none;
-    color: var(--text-secondary);
+.expand-icon {
     font-size: 1.25rem;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all var(--transition-fast);
-}
-
-.expand-btn:hover {
-    background: var(--accent-primary);
-    color: white;
-}
-
-.recommendation-details {
-    padding: 0 var(--spacing-md) var(--spacing-md);
-    border-top: 1px solid var(--border-color);
-    margin-top: 0;
-    padding-top: var(--spacing-md);
-}
-
-.actions-label {
-    font-size: 0.75rem;
     color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    margin-bottom: var(--spacing-sm);
+    width: 24px;
+    text-align: center;
 }
 
 .recommendation-actions {
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-xs);
-    margin-bottom: var(--spacing-md);
+    padding: var(--spacing-md);
+    padding-top: 0;
+    animation: slideDown 0.2s ease;
 }
 
-.action-chip {
+.recommendation-actions h5 {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-bottom: var(--spacing-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.action-item {
     display: flex;
     align-items: center;
     gap: var(--spacing-sm);
-    padding: var(--spacing-sm) var(--spacing-md);
+    padding: var(--spacing-sm);
     background: var(--bg-secondary);
     border-radius: var(--radius-md);
-    font-size: 0.8125rem;
+    margin-bottom: var(--spacing-xs);
+    font-size: 0.8rem;
 }
 
 .action-icon {
     font-size: 1rem;
 }
 
-.action-text {
-    color: var(--text-secondary);
-}
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
 
-.recommendation-cta {
-    display: flex;
-    gap: var(--spacing-sm);
-    padding-top: var(--spacing-md);
-    border-top: 1px solid var(--border-color);
-}
-
-.btn-sm {
-    padding: var(--spacing-xs) var(--spacing-md);
-    font-size: 0.8125rem;
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }

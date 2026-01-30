@@ -1,21 +1,17 @@
 """
 Silent Bottleneck Detector - watsonx.ai Client
 
-Integrates with IBM watsonx.ai for intelligent pattern analysis
-and recommendation generation.
+Integrates with IBM watsonx.ai for intelligent pattern analysis.
 """
 
 import os
 import json
-from typing import Dict, List, Any, Optional
+from typing import Dict, List, Any
 from datetime import datetime
 
 
 class WatsonxClient:
-    """
-    Client for watsonx.ai integration.
-    Supports both real API calls and mock mode for development.
-    """
+    """Client for watsonx.ai integration."""
     
     def __init__(self):
         self.api_key = os.getenv("WATSONX_API_KEY")
@@ -23,7 +19,7 @@ class WatsonxClient:
         self.url = os.getenv("WATSONX_URL", "https://us-south.ml.cloud.ibm.com")
         self.use_mock = os.getenv("USE_MOCK_AI", "true").lower() == "true"
         
-        if not self.use_mock and self.api_key:
+        if not self.use_mock and self.api_key and self.project_id:
             self._init_real_client()
     
     def _init_real_client(self):
@@ -45,15 +41,7 @@ class WatsonxClient:
             self.use_mock = True
     
     def analyze_bottlenecks(self, data: Dict[str, Any]) -> Dict[str, Any]:
-        """
-        Analyze workflow data to detect bottlenecks.
-        
-        Args:
-            data: Combined data from GitHub, Jira, Slack, CI/CD
-            
-        Returns:
-            Analysis results with detected bottlenecks and recommendations
-        """
+        """Analyze workflow data to detect bottlenecks."""
         if self.use_mock:
             return self._mock_analysis(data)
         else:
@@ -64,7 +52,6 @@ class WatsonxClient:
         try:
             from ibm_watsonx_ai.foundation_models import Model
             
-            # Use Granite model for analysis
             model = Model(
                 model_id="ibm/granite-13b-instruct-v2",
                 credentials={
@@ -74,10 +61,8 @@ class WatsonxClient:
                 project_id=self.project_id,
             )
             
-            # Create prompt for analysis
             prompt = self._create_analysis_prompt(data)
             
-            # Generate response
             response = model.generate_text(
                 prompt=prompt,
                 params={
@@ -87,7 +72,6 @@ class WatsonxClient:
                 }
             )
             
-            # Parse and structure the response
             return self._parse_ai_response(response, data)
             
         except Exception as e:
@@ -101,7 +85,7 @@ class WatsonxClient:
         slack_summary = data.get("slack", {}).get("summary", {})
         cicd_summary = data.get("cicd", {}).get("summary", {})
         
-        prompt = f"""Analyze the following team workflow data and identify bottlenecks:
+        return f"""Analyze the following team workflow data and identify bottlenecks:
 
 ## GitHub Data
 - Total PRs: {github_summary.get('total_prs', 'N/A')}
@@ -111,40 +95,20 @@ class WatsonxClient:
 ## Jira Data
 - Total tickets: {jira_summary.get('total_tickets', 'N/A')}
 - Blocked tickets: {jira_summary.get('blocked_count', 'N/A')}
-- Average days in review: {jira_summary.get('avg_days_in_review', 'N/A')}
 
 ## Slack Data
 - Meeting time: {slack_summary.get('meeting_percentage', 'N/A')}% of work hours
-- Weekly meeting hours: {slack_summary.get('total_meeting_hours_week', 'N/A')}
 
 ## CI/CD Data
 - Success rate: {cicd_summary.get('success_rate', 'N/A')}%
 - Most failing stage: {cicd_summary.get('flaky_stage', 'N/A')}
-- Failures in flaky stage: {cicd_summary.get('flaky_stage_failures', 'N/A')}
 
-Identify the top 5 bottlenecks and provide actionable recommendations for each.
-Format your response as JSON with the following structure:
-{{
-    "bottlenecks": [
-        {{
-            "type": "category",
-            "severity": "high/medium/low",
-            "title": "Short title",
-            "description": "Detailed description",
-            "impact": "Business impact",
-            "recommendation": "Specific action to take"
-        }}
-    ],
-    "health_score": 0-100,
-    "summary": "Overall summary"
-}}
-"""
-        return prompt
+Identify the top 5 bottlenecks and provide actionable recommendations.
+Format as JSON with bottlenecks array, health_score (0-100), and summary."""
     
     def _parse_ai_response(self, response: str, data: Dict[str, Any]) -> Dict[str, Any]:
         """Parse the AI response into structured format."""
         try:
-            # Try to extract JSON from response
             import re
             json_match = re.search(r'\{[\s\S]*\}', response)
             if json_match:
@@ -154,15 +118,10 @@ Format your response as JSON with the following structure:
                 return result
         except:
             pass
-        
-        # Fall back to mock if parsing fails
         return self._mock_analysis(data)
     
     def _mock_analysis(self, data: Dict[str, Any]) -> Dict[str, Any]:
-        """
-        Generate mock analysis results based on the data patterns.
-        This creates realistic bottleneck detection for demos.
-        """
+        """Generate mock analysis results based on the data patterns."""
         bottlenecks = []
         
         # Analyze GitHub data for PR review bottleneck
@@ -177,8 +136,8 @@ Format your response as JSON with the following structure:
                     "severity": "high",
                     "title": "PR Review Concentration",
                     "description": f"{stats['member']['name']} approved {stats['percentage']}% of all PRs last month",
-                    "impact": "Team velocity is at risk if this person is unavailable. 12 PRs are currently waiting for their review.",
-                    "recommendation": "Train 2 more developers on code review best practices and distribute review load",
+                    "impact": "Team velocity is at risk if this person is unavailable.",
+                    "recommendation": "Train 2 more developers on code review best practices",
                     "icon": "🚨",
                     "metric_value": f"{stats['percentage']}%",
                     "metric_label": "PRs reviewed by one person",
@@ -192,9 +151,9 @@ Format your response as JSON with the following structure:
                 "type": "hidden_delay",
                 "severity": "medium",
                 "title": "Deploy Queue Bottleneck",
-                "description": f"Average time from PR-approved to deployed: {avg_merge_delay} hours (industry avg: 2 hours)",
-                "impact": "Features sit idle waiting for deployment, slowing time-to-market",
-                "recommendation": "Automate deploy pipeline to run immediately after approval, not on a schedule",
+                "description": f"Average time from PR-approved to deployed: {avg_merge_delay} hours",
+                "impact": "Features sit idle waiting for deployment",
+                "recommendation": "Automate deploy pipeline to run immediately after approval",
                 "icon": "⏰",
                 "metric_value": f"{avg_merge_delay}h",
                 "metric_label": "avg deploy delay",
@@ -210,9 +169,9 @@ Format your response as JSON with the following structure:
                 "type": "flaky_process",
                 "severity": "high",
                 "title": "Flaky CI/CD Pipeline",
-                "description": f"'{flaky_stage}' stage fails {cicd_summary.get('flaky_stage_failures', 0)} times ({failure_rate}% failure rate)",
-                "impact": "Developers waste time re-running builds and lose trust in the pipeline",
-                "recommendation": f"Investigate and fix flaky tests in {flaky_stage}, consider quarantining unstable tests",
+                "description": f"'{flaky_stage}' stage fails {failure_rate}% of the time",
+                "impact": "Developers waste time re-running builds",
+                "recommendation": f"Investigate and fix flaky tests in {flaky_stage}",
                 "icon": "🔄",
                 "metric_value": f"{failure_rate}%",
                 "metric_label": "pipeline failure rate",
@@ -227,9 +186,9 @@ Format your response as JSON with the following structure:
                 "type": "knowledge_silo",
                 "severity": "medium",
                 "title": f"Knowledge Silo: {silo['area'].title()}",
-                "description": f"Only {silo['contributor_count']} people have touched {silo['area']} code in the last month",
-                "impact": f"Bus factor of {silo['contributor_count']} - critical system at risk if these people leave",
-                "recommendation": f"Schedule knowledge-sharing sessions and pair programming for {silo['area']} module",
+                "description": f"Only {silo['contributor_count']} people have touched {silo['area']} code",
+                "impact": f"Critical system at risk if these people leave",
+                "recommendation": f"Schedule knowledge-sharing sessions for {silo['area']}",
                 "icon": "🔐",
                 "metric_value": str(silo['contributor_count']),
                 "metric_label": "contributors (bus factor)",
@@ -245,8 +204,8 @@ Format your response as JSON with the following structure:
                 "severity": "medium" if meeting_pct < 35 else "high",
                 "title": "Excessive Meeting Time",
                 "description": f"Team spent {meeting_pct}% of time in meetings (healthy target: <20%)",
-                "impact": f"Reduced focus time for deep work. Weekly meeting hours: {slack_summary.get('total_meeting_hours_week', 0)}",
-                "recommendation": "Audit recurring meetings, implement 'No Meeting Wednesdays', and default to async communication",
+                "impact": "Reduced focus time for deep work",
+                "recommendation": "Audit recurring meetings, implement 'No Meeting Wednesdays'",
                 "icon": "💬",
                 "metric_value": f"{meeting_pct}%",
                 "metric_label": "time in meetings",
@@ -261,20 +220,19 @@ Format your response as JSON with the following structure:
                 "type": "blocked_work",
                 "severity": "medium",
                 "title": "Stalled Tickets in Review",
-                "description": f"{blocked_count} tickets blocked waiting for review (avg {jira_summary.get('avg_days_in_review', 0)} days)",
-                "impact": "Sprint velocity impacted, developers context-switching while waiting",
+                "description": f"{blocked_count} tickets blocked waiting for review",
+                "impact": "Sprint velocity impacted",
                 "recommendation": "Set up daily review rotation and max 24-hour review SLA",
                 "icon": "🚫",
                 "metric_value": str(blocked_count),
                 "metric_label": "blocked tickets",
             })
         
-        # Calculate health score based on bottlenecks
+        # Calculate health score
         severity_weights = {"high": 15, "medium": 8, "low": 3}
         penalty = sum(severity_weights.get(b["severity"], 5) for b in bottlenecks)
         health_score = max(0, min(100, 100 - penalty))
         
-        # Determine trend (mock for demo)
         import random
         trend_change = random.choice([-8, -5, -3, 2, 5])
         
@@ -289,14 +247,11 @@ Format your response as JSON with the following structure:
                 "new_bottlenecks": len([b for b in bottlenecks if b["severity"] == "high"]),
                 "resolved_bottlenecks": random.randint(0, 2),
             },
-            "summary": f"Detected {len(bottlenecks)} bottlenecks affecting team productivity. Health score: {health_score}/100.",
+            "summary": f"Detected {len(bottlenecks)} bottlenecks. Health score: {health_score}/100.",
         }
     
     def generate_recommendations(self, analysis: Dict[str, Any]) -> List[Dict[str, Any]]:
-        """
-        Generate actionable recommendations based on the analysis.
-        Each recommendation can be turned into an Orchestrate workflow action.
-        """
+        """Generate actionable recommendations based on the analysis."""
         recommendations = []
         
         for bottleneck in analysis.get("bottlenecks", []):
@@ -309,19 +264,16 @@ Format your response as JSON with the following structure:
                 "actions": [],
             }
             
-            # Define specific actions based on bottleneck type
             btype = bottleneck.get("type")
             
             if btype == "single_point_of_failure":
                 action["actions"] = [
                     {"type": "create_jira_ticket", "description": "Create training ticket for code review best practices"},
                     {"type": "slack_message", "description": "Notify team about review load distribution"},
-                    {"type": "schedule_meeting", "description": "Schedule review process workshop"},
                 ]
             elif btype == "hidden_delay":
                 action["actions"] = [
                     {"type": "create_jira_ticket", "description": "Automate deployment pipeline"},
-                    {"type": "update_config", "description": "Enable auto-deploy on merge"},
                 ]
             elif btype == "flaky_process":
                 action["actions"] = [
@@ -331,16 +283,13 @@ Format your response as JSON with the following structure:
             elif btype == "knowledge_silo":
                 action["actions"] = [
                     {"type": "schedule_meeting", "description": "Schedule knowledge-sharing session"},
-                    {"type": "create_jira_ticket", "description": "Document critical system architecture"},
                 ]
             elif btype == "meeting_overload":
                 action["actions"] = [
                     {"type": "slack_message", "description": "Propose 'No Meeting Wednesday' policy"},
-                    {"type": "create_document", "description": "Create async communication guidelines"},
                 ]
             elif btype == "blocked_work":
                 action["actions"] = [
-                    {"type": "slack_message", "description": "Set up daily review rotation"},
                     {"type": "create_jira_ticket", "description": "Define review SLA policy"},
                 ]
             
@@ -349,7 +298,6 @@ Format your response as JSON with the following structure:
         return recommendations
 
 
-# Singleton instance
 _client = None
 
 def get_watsonx_client() -> WatsonxClient:

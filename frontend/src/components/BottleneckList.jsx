@@ -3,70 +3,45 @@ import './BottleneckList.css';
 function BottleneckList({ bottlenecks }) {
     if (!bottlenecks || bottlenecks.length === 0) {
         return (
-            <div className="empty-state">
-                <div className="empty-state-icon">🎉</div>
-                <h3>No Bottlenecks Detected!</h3>
-                <p>Your team is running smoothly.</p>
+            <div className="card bottleneck-list">
+                <div className="card-header">
+                    <h3 className="card-title">Detected Bottlenecks</h3>
+                </div>
+                <div className="empty-state">
+                    <p>No bottlenecks detected</p>
+                </div>
             </div>
         );
     }
 
     return (
-        <div className="bottleneck-list">
-            {bottlenecks.map((bottleneck, index) => (
-                <div
-                    key={index}
-                    className={`bottleneck-item severity-${bottleneck.severity}`}
-                >
-                    <div className="bottleneck-icon">
-                        {bottleneck.icon || getDefaultIcon(bottleneck.type)}
-                    </div>
-
-                    <div className="bottleneck-content">
-                        <div className="bottleneck-title">
-                            <span>{bottleneck.title}</span>
-                            <span className={`severity-badge ${bottleneck.severity}`}>
-                                {bottleneck.severity}
-                            </span>
-                        </div>
-
-                        <p className="bottleneck-description">
-                            {bottleneck.description}
-                        </p>
-
-                        {bottleneck.metric_value && (
-                            <div className="bottleneck-metric">
-                                <span className="bottleneck-metric-value">
-                                    {bottleneck.metric_value}
-                                </span>
-                                <span className="bottleneck-metric-label">
-                                    {bottleneck.metric_label}
+        <div className="card bottleneck-list">
+            <div className="card-header">
+                <h3 className="card-title">Detected Bottlenecks</h3>
+                <span className="badge">{bottlenecks.length} issues</span>
+            </div>
+            <div className="bottleneck-items">
+                {bottlenecks.map((bottleneck, index) => (
+                    <div key={index} className={`bottleneck-item severity-${bottleneck.severity}`}>
+                        <div className="bottleneck-icon">{bottleneck.icon}</div>
+                        <div className="bottleneck-content">
+                            <div className="bottleneck-header">
+                                <h4>{bottleneck.title}</h4>
+                                <span className={`severity-badge ${bottleneck.severity}`}>
+                                    {bottleneck.severity}
                                 </span>
                             </div>
-                        )}
-
-                        {bottleneck.impact && (
-                            <p className="bottleneck-impact">
-                                <strong>Impact:</strong> {bottleneck.impact}
-                            </p>
-                        )}
+                            <p className="bottleneck-description">{bottleneck.description}</p>
+                            <div className="bottleneck-metric">
+                                <span className="metric-value">{bottleneck.metric_value}</span>
+                                <span className="metric-label">{bottleneck.metric_label}</span>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            ))}
+                ))}
+            </div>
         </div>
     );
-}
-
-function getDefaultIcon(type) {
-    const icons = {
-        single_point_of_failure: '🚨',
-        hidden_delay: '⏰',
-        flaky_process: '🔄',
-        knowledge_silo: '🔐',
-        meeting_overload: '💬',
-        blocked_work: '🚫',
-    };
-    return icons[type] || '⚠️';
 }
 
 export default BottleneckList;

@@ -1,132 +1,71 @@
-import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } from 'recharts';
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 import './TrendChart.css';
 
-const COLORS = ['#6366f1', '#8b5cf6', '#a855f7', '#3b82f6', '#10b981', '#f59e0b'];
+const COLORS = ['#ef4444', '#f59e0b', '#3b82f6'];
 
-function TrendChart({ type, data, title }) {
-    // Generate mock chart data if not provided
-    const chartData = generateChartData(type, data);
+function TrendChart({ data }) {
+    const chartData = [
+        { name: 'High', value: data?.filter((b) => b.severity === 'high').length || 0 },
+        { name: 'Medium', value: data?.filter((b) => b.severity === 'medium').length || 0 },
+        { name: 'Low', value: data?.filter((b) => b.severity === 'low').length || 0 },
+    ].filter((d) => d.value > 0);
 
-    if (type === 'pie') {
+    if (chartData.length === 0) {
         return (
-            <div className="chart-wrapper">
-                <ResponsiveContainer width="100%" height={250}>
+            <div className="card trend-chart">
+                <div className="card-header">
+                    <h3 className="card-title">Severity Distribution</h3>
+                </div>
+                <div className="empty-state">
+                    <p>No data to display</p>
+                </div>
+            </div>
+        );
+    }
+
+    return (
+        <div className="card trend-chart">
+            <div className="card-header">
+                <h3 className="card-title">Severity Distribution</h3>
+            </div>
+            <div className="chart-container">
+                <ResponsiveContainer width="100%" height={150}>
                     <PieChart>
                         <Pie
                             data={chartData}
                             cx="50%"
                             cy="50%"
-                            innerRadius={60}
-                            outerRadius={90}
-                            paddingAngle={2}
+                            innerRadius={40}
+                            outerRadius={60}
+                            paddingAngle={5}
                             dataKey="value"
-                            label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                            labelLine={false}
                         >
                             {chartData.map((entry, index) => (
-                                <Cell
-                                    key={`cell-${index}`}
-                                    fill={COLORS[index % COLORS.length]}
-                                    style={{ filter: 'drop-shadow(0 0 4px rgba(99, 102, 241, 0.3))' }}
-                                />
+                                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                             ))}
                         </Pie>
                         <Tooltip
                             contentStyle={{
-                                background: '#1a1a25',
-                                border: '1px solid rgba(148, 163, 184, 0.1)',
-                                borderRadius: '8px',
-                                color: '#f8fafc',
+                                background: 'var(--bg-card)',
+                                border: '1px solid var(--border-color)',
+                                borderRadius: 'var(--radius-md)',
+                                color: 'var(--text-primary)',
                             }}
-                        />
-                        <Legend
-                            verticalAlign="bottom"
-                            height={36}
-                            formatter={(value) => <span style={{ color: '#94a3b8' }}>{value}</span>}
                         />
                     </PieChart>
                 </ResponsiveContainer>
+                <div className="chart-legend">
+                    {chartData.map((entry, index) => (
+                        <div key={entry.name} className="legend-item">
+                            <span className="legend-color" style={{ background: COLORS[index] }}></span>
+                            <span>{entry.name}</span>
+                            <span className="legend-value">{entry.value}</span>
+                        </div>
+                    ))}
+                </div>
             </div>
-        );
-    }
-
-    if (type === 'bar') {
-        return (
-            <div className="chart-wrapper">
-                <ResponsiveContainer width="100%" height={250}>
-                    <BarChart data={chartData} barSize={30}>
-                        <XAxis
-                            dataKey="name"
-                            axisLine={false}
-                            tickLine={false}
-                            tick={{ fill: '#94a3b8', fontSize: 12 }}
-                        />
-                        <YAxis
-                            axisLine={false}
-                            tickLine={false}
-                            tick={{ fill: '#94a3b8', fontSize: 12 }}
-                        />
-                        <Tooltip
-                            contentStyle={{
-                                background: '#1a1a25',
-                                border: '1px solid rgba(148, 163, 184, 0.1)',
-                                borderRadius: '8px',
-                                color: '#f8fafc',
-                            }}
-                            cursor={{ fill: 'rgba(99, 102, 241, 0.1)' }}
-                        />
-                        <Bar
-                            dataKey="success"
-                            name="Success"
-                            fill="#10b981"
-                            radius={[4, 4, 0, 0]}
-                        />
-                        <Bar
-                            dataKey="failed"
-                            name="Failed"
-                            fill="#ef4444"
-                            radius={[4, 4, 0, 0]}
-                        />
-                        <Legend
-                            verticalAlign="top"
-                            height={36}
-                            formatter={(value) => <span style={{ color: '#94a3b8' }}>{value}</span>}
-                        />
-                    </BarChart>
-                </ResponsiveContainer>
-            </div>
-        );
-    }
-
-    return <div className="chart-placeholder">Chart not available</div>;
-}
-
-function generateChartData(type, data) {
-    if (type === 'pie') {
-        // PR Review distribution mock data
-        return [
-            { name: 'Sarah', value: 78 },
-            { name: 'Mike', value: 12 },
-            { name: 'Alex', value: 5 },
-            { name: 'Emma', value: 3 },
-            { name: 'Others', value: 2 },
-        ];
-    }
-
-    if (type === 'bar') {
-        // CI/CD pipeline data mock
-        return [
-            { name: 'Mon', success: 8, failed: 3 },
-            { name: 'Tue', success: 10, failed: 4 },
-            { name: 'Wed', success: 7, failed: 5 },
-            { name: 'Thu', success: 9, failed: 2 },
-            { name: 'Fri', success: 6, failed: 6 },
-            { name: 'Sat', success: 3, failed: 1 },
-            { name: 'Sun', success: 2, failed: 0 },
-        ];
-    }
-
-    return [];
+        </div>
+    );
 }
 
 export default TrendChart;

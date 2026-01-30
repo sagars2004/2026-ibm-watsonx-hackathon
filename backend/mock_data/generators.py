@@ -65,7 +65,6 @@ def generate_github_data(days: int = 30) -> Dict[str, Any]:
             reviewer = random.choice([m for m in TEAM_MEMBERS if m["id"] not in ["sarah", "mike", author["id"]]])
         
         # Review time - INTENTIONALLY LONG (hidden delay bottleneck!)
-        # Average 18 hours, but some take days
         if random.random() < 0.3:  # 30% take extra long
             review_hours = random.randint(24, 72)
         else:
@@ -74,7 +73,6 @@ def generate_github_data(days: int = 30) -> Dict[str, Any]:
         reviewed_at = created_at + timedelta(hours=review_hours)
         
         # Time from reviewed to merged (deploy delay bottleneck!)
-        # Often waits overnight
         if random.random() < 0.6:  # 60% wait overnight
             merge_delay = random.randint(8, 20)
         else:
@@ -160,12 +158,7 @@ def generate_github_data(days: int = 30) -> Dict[str, Any]:
 
 
 def generate_jira_data(days: int = 30) -> Dict[str, Any]:
-    """
-    Generate Jira ticket data showing:
-    - Ticket flow times
-    - Blocked tickets
-    - Sprint velocity patterns
-    """
+    """Generate Jira ticket data."""
     statuses = ["To Do", "In Progress", "In Review", "Done"]
     priorities = ["Critical", "High", "Medium", "Low"]
     ticket_types = ["Bug", "Feature", "Task", "Improvement"]
@@ -173,13 +166,11 @@ def generate_jira_data(days: int = 30) -> Dict[str, Any]:
     tickets = []
     now = datetime.now()
     
-    for i in range(days * 3):  # ~3 tickets per day
+    for i in range(days * 3):
         created_at = now - timedelta(days=random.randint(1, days))
-        
         assignee = random.choice(TEAM_MEMBERS)
         
-        # Some tickets get stuck (bottleneck!)
-        if random.random() < 0.25:  # 25% get stuck
+        if random.random() < 0.25:
             status = "In Review"
             days_in_status = random.randint(3, 10)
         else:
@@ -202,7 +193,6 @@ def generate_jira_data(days: int = 30) -> Dict[str, Any]:
         }
         tickets.append(ticket)
     
-    # Calculate flow metrics
     status_counts = {}
     for ticket in tickets:
         status = ticket["status"]
@@ -224,31 +214,20 @@ def generate_jira_data(days: int = 30) -> Dict[str, Any]:
 
 
 def generate_slack_data(days: int = 30) -> Dict[str, Any]:
-    """
-    Generate Slack activity data showing:
-    - Meeting time (34% of work hours - too high!)
-    - Message volume patterns
-    - After-hours activity
-    """
+    """Generate Slack activity data with high meeting time."""
     now = datetime.now()
-    
-    # Daily activity for each team member
     daily_activity = []
     
     for day_offset in range(days):
         date = now - timedelta(days=day_offset)
         
         for member in TEAM_MEMBERS:
-            # Meeting hours per day (INTENTIONALLY HIGH for bottleneck demo)
-            if random.random() < 0.4:  # 40% of days have heavy meetings
-                meeting_hours = random.uniform(4, 7)  # 4-7 hours!
+            if random.random() < 0.4:
+                meeting_hours = random.uniform(4, 7)
             else:
                 meeting_hours = random.uniform(1, 3)
             
-            # Messages sent
             messages_sent = random.randint(10, 80)
-            
-            # After-hours activity (indicates overwork)
             after_hours_messages = random.randint(0, 15) if random.random() < 0.3 else 0
             
             daily_activity.append({
@@ -260,12 +239,10 @@ def generate_slack_data(days: int = 30) -> Dict[str, Any]:
                 "channels_active": random.randint(3, 12),
             })
     
-    # Calculate aggregates
     total_meeting_hours = sum(a["meeting_hours"] for a in daily_activity)
-    total_work_hours = days * len(TEAM_MEMBERS) * 8  # Assuming 8-hour days
+    total_work_hours = days * len(TEAM_MEMBERS) * 8
     meeting_percentage = round(total_meeting_hours / total_work_hours * 100, 1)
     
-    # Per-member stats
     member_stats = {}
     for member in TEAM_MEMBERS:
         member_activity = [a for a in daily_activity if a["member"]["id"] == member["id"]]
@@ -277,7 +254,7 @@ def generate_slack_data(days: int = 30) -> Dict[str, Any]:
         }
     
     return {
-        "daily_activity": daily_activity[:30],  # Last 30 entries
+        "daily_activity": daily_activity[:30],
         "member_stats": member_stats,
         "summary": {
             "meeting_percentage": meeting_percentage,
@@ -289,46 +266,32 @@ def generate_slack_data(days: int = 30) -> Dict[str, Any]:
 
 
 def generate_cicd_data(days: int = 30) -> Dict[str, Any]:
-    """
-    Generate CI/CD pipeline data showing:
-    - 40% failure rate on integration-test step (flaky!)
-    - Deploy queue delays
-    - Build time patterns
-    """
+    """Generate CI/CD pipeline data with 40% failure rate."""
     pipelines = []
     now = datetime.now()
-    
     stages = ["checkout", "install", "lint", "unit-test", "integration-test", "build", "deploy"]
     
-    for i in range(days * 4):  # ~4 pipeline runs per day
+    for i in range(days * 4):
         started_at = now - timedelta(days=random.randint(0, days), hours=random.randint(0, 23))
         
-        # Determine success/failure
-        # INTENTIONALLY: integration-test fails 40% of the time (flaky tests!)
         failed_stage = None
-        if random.random() < 0.4:  # 40% failure rate
-            # 80% of failures are on integration-test (the flaky step!)
+        if random.random() < 0.4:
             if random.random() < 0.8:
                 failed_stage = "integration-test"
             else:
                 failed_stage = random.choice(["unit-test", "build", "deploy"])
         
-        # Build stage durations
         stage_durations = {}
-        cumulative_time = 0
         for stage in stages:
             if failed_stage and stage == failed_stage:
-                duration = random.randint(60, 300)  # Failed stages take longer
+                duration = random.randint(60, 300)
                 stage_durations[stage] = {"duration_seconds": duration, "status": "failed"}
                 break
             else:
                 duration = random.randint(30, 180)
                 stage_durations[stage] = {"duration_seconds": duration, "status": "success"}
-            cumulative_time += duration
         
         total_duration = sum(s["duration_seconds"] for s in stage_durations.values())
-        
-        # Who triggered it
         triggered_by = random.choice(TEAM_MEMBERS)
         
         pipeline = {
@@ -345,14 +308,11 @@ def generate_cicd_data(days: int = 30) -> Dict[str, Any]:
         }
         pipelines.append(pipeline)
     
-    # Sort by started time
     pipelines.sort(key=lambda x: x["started_at"], reverse=True)
     
-    # Calculate failure statistics
     total_runs = len(pipelines)
     failed_runs = len([p for p in pipelines if p["status"] == "failed"])
     
-    # Failures by stage
     stage_failures = {}
     for p in pipelines:
         if p["failed_stage"]:
@@ -383,10 +343,3 @@ def generate_all_mock_data(days: int = 30) -> Dict[str, Any]:
         "generated_at": datetime.now().isoformat(),
         "period_days": days,
     }
-
-
-if __name__ == "__main__":
-    # Test data generation
-    import json
-    data = generate_all_mock_data(7)
-    print(json.dumps(data, indent=2, default=str))

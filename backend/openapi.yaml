@@ -7,10 +7,10 @@ info:
     name: IBM watsonx Hackathon 2026
 
 servers:
+  - url: https://christian-unidiomatic-latosha.ngrok-free.dev
+    description: Live tunnel via ngrok (for watsonx Orchestrate)
   - url: http://localhost:5001
     description: Local development server
-  - url: https://your-deployed-url.com
-    description: Production server (update after deployment)
 
 paths:
   /api/health:

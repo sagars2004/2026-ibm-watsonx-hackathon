@@ -1,30 +1,26 @@
 import './LoadingOverlay.css';
 
 function LoadingOverlay() {
+    const steps = [
+        { icon: '📊', text: 'Collecting GitHub data...' },
+        { icon: '📋', text: 'Analyzing Jira patterns...' },
+        { icon: '💬', text: 'Processing Slack activity...' },
+        { icon: '🔧', text: 'Evaluating CI/CD pipelines...' },
+        { icon: '🤖', text: 'Running watsonx.ai analysis...' },
+    ];
+
     return (
         <div className="loading-overlay">
             <div className="loading-content">
-                <div className="loading-animation">
-                    <div className="loading-ring"></div>
-                    <div className="loading-icon">🔍</div>
-                </div>
-                <h2 className="loading-title">Analyzing Team Patterns</h2>
-                <p className="loading-text">
-                    Scanning GitHub, Jira, Slack, and CI/CD data...
-                </p>
+                <div className="loading-icon">🔍</div>
+                <h2>Detecting Hidden Bottlenecks</h2>
                 <div className="loading-steps">
-                    <div className="loading-step active">
-                        <span className="step-icon">📊</span>
-                        <span>Collecting data</span>
-                    </div>
-                    <div className="loading-step">
-                        <span className="step-icon">🤖</span>
-                        <span>AI analysis with watsonx</span>
-                    </div>
-                    <div className="loading-step">
-                        <span className="step-icon">💡</span>
-                        <span>Generating insights</span>
-                    </div>
+                    {steps.map((step, i) => (
+                        <div key={i} className="loading-step" style={{ animationDelay: `${i * 0.5}s` }}>
+                            <span className="step-icon">{step.icon}</span>
+                            <span className="step-text">{step.text}</span>
+                        </div>
+                    ))}
                 </div>
             </div>
         </div>

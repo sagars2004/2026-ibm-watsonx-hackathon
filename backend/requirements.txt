@@ -4,10 +4,8 @@ flask-cors==4.0.0
 python-dotenv==1.0.0
 
 # IBM Watson Services
-ibm-watson==8.1.0
-ibm-cloud-sdk-core==3.18.0
-ibm-watsonx-ai==1.0.0
-ibmcloudant==0.6.0
+ibm-watsonx-ai==1.1.6
+ibmcloudant==0.8.1
 
 # Utilities
 requests==2.31.0
