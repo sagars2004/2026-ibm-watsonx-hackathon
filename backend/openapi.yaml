@@ -1,0 +1,320 @@
+openapi: 3.0.3
+info:
+  title: Silent Bottleneck Detector API
+  description: AI-powered team workflow analysis to detect hidden bottlenecks
+  version: 1.0.0
+  contact:
+    name: IBM watsonx Hackathon 2026
+
+servers:
+  - url: http://localhost:5001
+    description: Local development server
+  - url: https://your-deployed-url.com
+    description: Production server (update after deployment)
+
+paths:
+  /api/health:
+    get:
+      operationId: healthCheck
+      summary: Health Check
+      description: Check if the API is running
+      responses:
+        '200':
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  service:
+                    type: string
+                  version:
+                    type: string
+
+  /api/analyze:
+    post:
+      operationId: analyzeBottlenecks
+      summary: Analyze Team Bottlenecks
+      description: Run AI-powered analysis on team workflow data to detect hidden bottlenecks using watsonx.ai
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                days:
+                  type: integer
+                  description: Number of days to analyze
+                  default: 30
+                save:
+                  type: boolean
+                  description: Whether to save results to database
+                  default: true
+      responses:
+        '200':
+          description: Analysis results with detected bottlenecks
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnalysisResult'
+
+  /api/metrics/health-score:
+    get:
+      operationId: getHealthScore
+      summary: Get Team Health Score
+      description: Get the current team health score for quick dashboard updates
+      responses:
+        '200':
+          description: Current health score
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  health_score:
+                    type: integer
+                    description: Team health score from 0-100
+                  health_status:
+                    type: string
+                    enum: [healthy, warning, critical]
+                  bottleneck_count:
+                    type: integer
+                  timestamp:
+                    type: string
+                    format: date-time
+
+  /api/recommendations:
+    get:
+      operationId: getRecommendations
+      summary: Get AI Recommendations
+      description: Get AI-generated recommendations based on detected bottlenecks
+      responses:
+        '200':
+          description: List of recommendations
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  recommendations:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Recommendation'
+                  count:
+                    type: integer
+
+  /api/orchestrate/trigger:
+    post:
+      operationId: triggerOrchestration
+      summary: Trigger Orchestration Action
+      description: Webhook endpoint for watsonx Orchestrate to trigger automated workflows
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - action
+              properties:
+                action:
+                  type: string
+                  enum:
+                    - weekly_analysis
+                    - balance_workload
+                    - create_tickets
+                    - send_slack_summary
+                  description: The action to perform
+                params:
+                  type: object
+                  description: Additional parameters for the action
+      responses:
+        '200':
+          description: Action result
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  action:
+                    type: string
+                  status:
+                    type: string
+                  timestamp:
+                    type: string
+                  outputs:
+                    type: object
+
+  /api/data/github:
+    get:
+      operationId: getGithubData
+      summary: Get GitHub PR Data
+      description: Retrieve GitHub pull request and code review data
+      parameters:
+        - name: days
+          in: query
+          schema:
+            type: integer
+            default: 30
+          description: Number of days of data to retrieve
+      responses:
+        '200':
+          description: GitHub PR data with reviewer statistics
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /api/data/jira:
+    get:
+      operationId: getJiraData
+      summary: Get Jira Ticket Data
+      description: Retrieve Jira ticket flow and status data
+      parameters:
+        - name: days
+          in: query
+          schema:
+            type: integer
+            default: 30
+      responses:
+        '200':
+          description: Jira ticket data
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /api/data/slack:
+    get:
+      operationId: getSlackData
+      summary: Get Slack Activity Data
+      description: Retrieve Slack communication and meeting time data
+      parameters:
+        - name: days
+          in: query
+          schema:
+            type: integer
+            default: 30
+      responses:
+        '200':
+          description: Slack activity data
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /api/data/cicd:
+    get:
+      operationId: getCicdData
+      summary: Get CI/CD Pipeline Data
+      description: Retrieve CI/CD pipeline success rates and failure patterns
+      parameters:
+        - name: days
+          in: query
+          schema:
+            type: integer
+            default: 30
+      responses:
+        '200':
+          description: CI/CD pipeline data
+          content:
+            application/json:
+              schema:
+                type: object
+
+components:
+  schemas:
+    AnalysisResult:
+      type: object
+      properties:
+        analysis_id:
+          type: string
+          description: Unique identifier for this analysis
+        timestamp:
+          type: string
+          format: date-time
+        health_score:
+          type: integer
+          description: Team health score from 0 to 100
+          minimum: 0
+          maximum: 100
+        health_status:
+          type: string
+          enum: [healthy, warning, critical]
+        bottlenecks:
+          type: array
+          items:
+            $ref: '#/components/schemas/Bottleneck'
+        recommendations:
+          type: array
+          items:
+            $ref: '#/components/schemas/Recommendation'
+        trends:
+          type: object
+          properties:
+            health_score_change:
+              type: integer
+            new_bottlenecks:
+              type: integer
+            resolved_bottlenecks:
+              type: integer
+        summary:
+          type: string
+
+    Bottleneck:
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+            - single_point_of_failure
+            - hidden_delay
+            - flaky_process
+            - knowledge_silo
+            - meeting_overload
+            - blocked_work
+        severity:
+          type: string
+          enum: [high, medium, low]
+        title:
+          type: string
+        description:
+          type: string
+        impact:
+          type: string
+        recommendation:
+          type: string
+        icon:
+          type: string
+        metric_value:
+          type: string
+        metric_label:
+          type: string
+
+    Recommendation:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        related_bottleneck:
+          type: string
+        priority:
+          type: string
+          enum: [high, medium, low]
+        status:
+          type: string
+          enum: [pending, in_progress, completed, dismissed]
+        actions:
+          type: array
+          items:
+            type: object
+            properties:
+              type:
+                type: string
+              description:
+                type: string

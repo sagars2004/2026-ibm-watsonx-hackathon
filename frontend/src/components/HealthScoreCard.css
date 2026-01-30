@@ -1,0 +1,93 @@
+.health-score-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: var(--spacing-xl);
+    background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-tertiary) 100%);
+}
+
+.health-score-ring {
+    position: relative;
+    width: 180px;
+    height: 180px;
+    margin-bottom: var(--spacing-lg);
+}
+
+.health-score-ring svg {
+    filter: drop-shadow(0 0 10px rgba(99, 102, 241, 0.2));
+}
+
+.health-score-value {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -60%);
+    font-size: 3.5rem;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.health-score-max {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, 50%);
+    font-size: 1rem;
+    color: var(--text-muted);
+}
+
+.health-score-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-md);
+}
+
+.health-status {
+    display: inline-flex;
+    align-items: center;
+    padding: var(--spacing-xs) var(--spacing-md);
+    border-radius: var(--radius-full);
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+.health-status.healthy {
+    background: rgba(16, 185, 129, 0.15);
+    color: var(--status-success);
+}
+
+.health-status.warning {
+    background: rgba(245, 158, 11, 0.15);
+    color: var(--status-warning);
+}
+
+.health-status.critical {
+    background: rgba(239, 68, 68, 0.15);
+    color: var(--status-error);
+}
+
+.health-trend {
+    font-size: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.health-trend.positive {
+    color: var(--status-success);
+}
+
+.health-trend.negative {
+    color: var(--status-error);
+}
+
+.health-description {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    max-width: 200px;
+    line-height: 1.5;
+}

@@ -1,0 +1,35 @@
+.chart-wrapper {
+    width: 100%;
+    padding: var(--spacing-md) 0;
+}
+
+.chart-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 200px;
+    color: var(--text-muted);
+    background: var(--bg-tertiary);
+    border-radius: var(--radius-lg);
+}
+
+/* Recharts Customization */
+.recharts-default-tooltip {
+    background: var(--bg-card) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: var(--radius-md) !important;
+}
+
+.recharts-tooltip-label {
+    color: var(--text-primary) !important;
+    font-weight: 600 !important;
+}
+
+.recharts-legend-item-text {
+    color: var(--text-secondary) !important;
+}
+
+.recharts-pie-label-text {
+    font-size: 0.75rem;
+    fill: var(--text-secondary);
+}
