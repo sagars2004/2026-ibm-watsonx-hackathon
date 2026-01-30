@@ -210,6 +210,42 @@ curl -X POST https://YOUR-URL/api/orchestrate/trigger \
 
 ---
 
+## Step 8: Create the Automation Workflow (The "Wow" Factor)
+
+This is the key demo piece where the system works proactively!
+
+1. **Go to "Automations"** (Icon usually looks like a lightning bolt or flow chart)
+2. Click **"Create automation"** (or "New automation")
+3. **Choose "Scheduled"** (or "Time-based") trigger
+4. **Configure Schedule:**
+   - **Frequency:** Weekly
+   - **Day:** Monday
+   - **Time:** 9:00 AM
+
+5. **Add Actions (The Flow):**
+
+   **Action 1: Check Team Health**
+   - Search for your custom skill: **"Get Health Score"**
+   - Add it to the flow.
+
+   **Action 2: Decision Logic (If/Else)**
+   - Add a **"Condition"** or **"Decision"** block.
+   - **Rule:** `If [Get Health Score.health_score] < 60`
+
+   **Action 3: True Path (Critical Health)**
+   - **Action:** Send a notification (e.g., Slack or Email).
+   - **Message:** "⚠️ **Critical Alert:** Team Health Score is **[health_score]**. Immediate attention required."
+   - **Action:** Create Ticket (Jira).
+   - **Summary:** "Investigate Critical Team Health (Score: [health_score])"
+
+   **Action 4: False Path (Healthy)**
+   - **Action:** Send a notification.
+   - **Message:** "✅ **Monday Update:** Team is healthy! Score: **[health_score]**. Keep it up!"
+
+6. **Activate:** Give it a name like "Weekly Health Check" and turn it **ON**.
+
+---
+
 ## Demo Flow for Hackathon
 
 1. **Open Dashboard** → Show current health score (31/100 - Critical!)

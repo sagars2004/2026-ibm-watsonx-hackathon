@@ -61,6 +61,37 @@ paths:
               schema:
                 $ref: '#/components/schemas/AnalysisResult'
 
+  /api/actions:
+    post:
+      operationId: executeAction
+      summary: Execute Self-Healing Action
+      description: Trigger an automated action to fix a detected bottleneck
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                type:
+                  type: string
+                  enum: [rebalance_workload, resolve_blockers, optimize_meetings]
+                  description: The type of action to execute
+      responses:
+        '200':
+          description: Action executed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                  data_updated:
+                    type: boolean
+
   /api/metrics/health-score:
     get:
       operationId: getHealthScore

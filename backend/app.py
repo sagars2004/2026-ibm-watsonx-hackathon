@@ -4,6 +4,9 @@ Silent Bottleneck Detector - Flask Backend API
 
 import os
 import uuid
+import time
+import json
+import requests
 from datetime import datetime
 from flask import Flask, jsonify, request
 from flask_cors import CORS
@@ -25,16 +28,134 @@ CORS(app, origins=[frontend_url, "http://localhost:3000", "http://localhost:5173
 _cached_data = None
 _cache_timestamp = None
 
+# Cloudant Configuration
+CLOUDANT_URL = os.getenv("CLOUDANT_URL")
+CLOUDANT_API_KEY = os.getenv("CLOUDANT_API_KEY")
+CLOUDANT_DB_NAME = os.getenv("CLOUDANT_DB_NAME", "bottleneck_detector")
 
-def get_mock_data(days: int = 30, force_refresh: bool = False):
-    global _cached_data, _cache_timestamp
+class CloudantDB:
+    def __init__(self):
+        self.enabled = bool(CLOUDANT_URL and CLOUDANT_API_KEY)
+        self.token = None
+        self.token_expiry = 0
+        
+        if self.enabled:
+            # Clean URL (remove trailing slash)
+            self.base_url = f"{CLOUDANT_URL.rstrip('/')}/{CLOUDANT_DB_NAME}"
+            self.ensure_db_exists()
     
-    if (force_refresh or _cached_data is None or _cache_timestamp is None or
-        (datetime.now() - _cache_timestamp).seconds > 300):
-        _cached_data = generate_all_mock_data(days)
-        _cache_timestamp = datetime.now()
+    def get_token(self):
+        """Get or refresh IAM Access Token"""
+        if self.token and time.time() < self.token_expiry:
+            return self.token
+            
+        try:
+            iam_url = "https://iam.cloud.ibm.com/identity/token"
+            headers = {"Content-Type": "application/x-www-form-urlencoded"}
+            data = {
+                "grant_type": "urn:ibm:params:oauth:grant-type:apikey",
+                "apikey": CLOUDANT_API_KEY
+            }
+            res = requests.post(iam_url, headers=headers, data=data)
+            if res.status_code == 200:
+                body = res.json()
+                self.token = body["access_token"]
+                # Expires in ~1 hour, refresh 5 mins early
+                self.token_expiry = time.time() + body.get("expires_in", 3600) - 300 
+                return self.token
+        except Exception as e:
+            print(f"❌ IAM Token Error: {e}")
+        return None
+
+    def get_headers(self):
+        token = self.get_token()
+        if token:
+            return {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
+        return None
+
+    def ensure_db_exists(self):
+        try:
+            headers = self.get_headers()
+            if not headers:
+                self.enabled = False
+                return
+
+            res = requests.get(self.base_url, headers=headers)
+            if res.status_code == 404:
+                # Create DB
+                create_res = requests.put(self.base_url, headers=headers)
+                if create_res.status_code in [201, 202]:
+                    print(f"✅ Created Cloudant DB: {CLOUDANT_DB_NAME}")
+                else:
+                    print(f"⚠️ Failed to create DB: {create_res.status_code}")
+            elif res.status_code == 200:
+                print(f"✅ Connected to Cloudant DB: {CLOUDANT_DB_NAME}")
+                
+        except Exception as e:
+            print(f"⚠️ Cloudant connection failed: {e}")
+            self.enabled = False
+
+    def get_latest_analysis(self):
+        if not self.enabled: return None
+        try:
+            headers = self.get_headers()
+            if not headers: return None
+            
+            url = f"{self.base_url}/latest_analysis"
+            res = requests.get(url, headers=headers)
+            if res.status_code == 200:
+                return res.json()
+        except Exception:
+            pass
+        return None
+
+    def save_analysis(self, data):
+        if not self.enabled: return
+        try:
+            headers = self.get_headers()
+            if not headers: return
+            
+            url = f"{self.base_url}/latest_analysis"
+            
+            # First get current rev if it exists to handle update
+            current = self.get_latest_analysis()
+            if current:
+                data["_rev"] = current.get("_rev")
+            
+            requests.put(url, headers=headers, json=data)
+            
+            # Also save historical record
+            history_url = f"{self.base_url}/{int(time.time())}"
+            data_copy = data.copy()
+            if "_id" in data_copy: del data_copy["_id"]
+            if "_rev" in data_copy: del data_copy["_rev"]
+            requests.put(history_url, headers=headers, json=data_copy)
+            
+            print("💾 Saved analysis to Cloudant")
+        except Exception as e:
+            print(f"⚠️ Failed to save to Cloudant: {e}")
+
+# Initialize DB
+db = CloudantDB()
+
+def get_mock_data(days=30):
+    """Generate realistic mock data OR fetch from DB if available"""
     
-    return _cached_data
+    # Try DB first
+    if db.enabled:
+        saved_data = db.get_latest_analysis()
+        if saved_data:
+            print("📂 Loaded data from Cloudant")
+            return saved_data
+
+    # Fallback to mock generation
+    generated_data = generate_all_mock_data(days)
+    
+    # Save to DB if enabled
+    if db.enabled:
+        db.save_analysis(generated_data)
+    
+    return generated_data
 
 
 # ============================================
@@ -152,48 +273,245 @@ def a2a_task_send():
     
     response_text = ""
     
-    if "health" in user_content or "score" in user_content:
-        analysis = watsonx.analyze_bottlenecks(data)
-        response_text = f"📊 **Team Health Score: {analysis['health_score']}/100**\n\n"
-        response_text += f"Status: {'✅ Healthy' if analysis['health_status'] == 'healthy' else '⚠️ ' + analysis['health_status'].title()}\n"
-        response_text += f"Bottlenecks detected: {len(analysis['bottlenecks'])}"
+    # Team member / workload analysis
+    if any(word in user_content for word in ["who", "team member", "workload", "overloaded", "busiest", "reviewer"]):
+        github = data["github"]
+        reviewers = github.get("reviewers", [])
         
-    elif "bottleneck" in user_content or "analyze" in user_content or "analysis" in user_content:
+        if reviewers:
+            top_reviewer = max(reviewers, key=lambda x: x.get("review_count", 0))
+            response_text = "**Team Workload Analysis**\n\n"
+            response_text += f"Top Reviewer: **{top_reviewer['name']}**\n"
+            response_text += f"- Reviews completed: {top_reviewer.get('review_count', 0)}\n"
+            response_text += f"- Review share: {top_reviewer.get('percentage', 0)}%\n\n"
+            response_text += "**All Reviewers:**\n"
+            for r in reviewers[:5]:
+                response_text += f"- {r['name']}: {r.get('review_count', 0)} reviews ({r.get('percentage', 0)}%)\n"
+            
+            if top_reviewer.get('percentage', 0) > 50:
+                response_text += f"\nWarning: {top_reviewer['name']} handles over 50% of reviews. Consider distributing the load."
+        else:
+            response_text = "No team member data available. Run a full analysis first."
+    
+    # Deployment / CI/CD status
+    elif any(word in user_content for word in ["deploy", "cicd", "ci/cd", "pipeline", "build", "release"]):
+        cicd = data["cicd"]["summary"]
+        response_text = "**CI/CD Pipeline Status**\n\n"
+        response_text += f"Success Rate: **{cicd['success_rate']}%**\n"
+        response_text += f"Avg Build Duration: {cicd['avg_build_duration_mins']} minutes\n"
+        response_text += f"Deploys per Day: {cicd.get('deploys_per_day', 0):.1f}\n"
+        response_text += f"Failed Builds Today: {cicd.get('failed_today', 0)}\n\n"
+        
+        if cicd['success_rate'] < 80:
+            response_text += "Alert: Pipeline success rate is below 80%. Check for flaky tests or infrastructure issues."
+        elif cicd['success_rate'] >= 95:
+            response_text += "Excellent: Pipeline is healthy with 95%+ success rate."
+        
+        # Add stage-level details if available
+        stages = data["cicd"].get("stages", [])
+        if stages:
+            failed_stages = [s for s in stages if s.get("failure_rate", 0) > 20]
+            if failed_stages:
+                response_text += "\n\n**Problem Stages:**\n"
+                for s in failed_stages[:3]:
+                    response_text += f"- {s['name']}: {s['failure_rate']}% failure rate\n"
+    
+    # Meeting / time analysis
+    elif any(word in user_content for word in ["meeting", "meetings", "calendar", "time spent", "focus time"]):
+        slack = data["slack"]["summary"]
+        meeting_pct = slack.get("meeting_time_percentage", 0)
+        response_text = "**Meeting Time Analysis**\n\n"
+        response_text += f"Team Meeting Time: **{meeting_pct}%** of work hours\n"
+        response_text += f"Avg Meetings per Day: {slack.get('meetings_per_day', 0)}\n"
+        response_text += f"Avg Response Time: {slack.get('avg_response_time_mins', 0)} minutes\n\n"
+        
+        if meeting_pct > 30:
+            response_text += "Warning: Team is spending over 30% of time in meetings.\n"
+            response_text += "Recommendation: Consider implementing 'No Meeting Wednesdays' or async standups."
+        elif meeting_pct < 15:
+            response_text += "Good: Meeting load is healthy at under 15%."
+        else:
+            response_text += "Meeting load is moderate. Monitor for increases."
+    
+    # Blockers / blocked work
+    elif any(word in user_content for word in ["block", "blocked", "stuck", "waiting", "impediment", "velocity"]):
+        jira = data["jira"]["summary"]
+        blocked_count = jira.get("blocked_count", 0)
+        total = jira.get("total_tickets", 1)
+        blocked_pct = (blocked_count / total) * 100 if total > 0 else 0
+        
+        response_text = "🚫 **Blocked Work Analysis**\n\n"
+        response_text += f"**Impact:** {blocked_count} tickets blocked ({blocked_pct:.1f}% of total)\n"
+        response_text += f"**Velocity:** {jira.get('velocity')} points (Target: 50)\n\n"
+        
+        # Simulated detailed ticket data for the demo
+        response_text += "**Top Blocked Tickets:**\n"
+        
+        # Create realistic looking blocked tickets based on the summary data
+        tickets = [
+            {"id": "PROJ-2032", "title": "Frontend Core Enhancement", "assignee": "Emma Wilson", "days": 5, "priority": "Critical"},
+            {"id": "PROJ-2041", "title": "User Management Feature", "assignee": "Sarah Chen", "days": 3, "priority": "High"},
+            {"id": "PROJ-2014", "title": "Investigate Payments", "assignee": "Alex Rivera", "days": 2, "priority": "High"}
+        ]
+        
+        for t in tickets:
+            response_text += f"• **{t['id']}**: {t['title']}\n"
+            response_text += f"   👤 {t['assignee']} | ⏳ {t['days']} days blocked | 🔴 {t['priority']}\n"
+            
+        if blocked_count > 3:
+            response_text += "\n💡 **Recommendation:** Multiple tickets are blocked. Schedule a quick sync to unblock."
+    
+    # Trend / comparison
+    elif any(word in user_content for word in ["trend", "compare", "last week", "history", "improve", "worse", "better"]):
         analysis = watsonx.analyze_bottlenecks(data)
-        response_text = f"🔍 **Bottleneck Analysis Results**\n\n"
+        trends = analysis.get("trends", {})
+        
+        response_text = "**Trend Analysis**\n\n"
+        response_text += f"Current Health Score: **{analysis['health_score']}/100**\n\n"
+        
+        change = trends.get("health_score_change", 0)
+        if change > 0:
+            response_text += f"Improvement: Score up {change} points from last week\n"
+        elif change < 0:
+            response_text += f"Decline: Score down {abs(change)} points from last week\n"
+        else:
+            response_text += "No change from last week\n"
+        
+        response_text += f"\nNew Bottlenecks: {trends.get('new_bottlenecks', 0)}\n"
+        response_text += f"Resolved Bottlenecks: {trends.get('resolved_bottlenecks', 0)}\n"
+        
+        if trends.get('resolved_bottlenecks', 0) > trends.get('new_bottlenecks', 0):
+            response_text += "\nGood progress: Resolving more issues than creating new ones."
+    
+    # Knowledge silos
+    elif any(word in user_content for word in ["knowledge", "silo", "bus factor", "expert", "only person"]):
+        response_text = "**Knowledge Silo Analysis**\n\n"
+        response_text += "Areas with limited expertise:\n\n"
+        
+        # Simulated knowledge silo data based on analysis
+        analysis = watsonx.analyze_bottlenecks(data)
+        silos = [b for b in analysis.get("bottlenecks", []) if "silo" in b.get("type", "").lower() or "knowledge" in b.get("title", "").lower()]
+        
+        if silos:
+            for silo in silos:
+                response_text += f"- **{silo['title']}**: {silo['description']}\n"
+            response_text += "\nRecommendation: Implement pair programming or documentation sprints for these areas."
+        else:
+            response_text += "No critical knowledge silos detected.\n"
+            response_text += "Best practice: Continue cross-training and code review rotations."
+    
+    # Priority / urgent items
+    elif any(word in user_content for word in ["priority", "urgent", "critical", "important", "fix first", "top issue"]):
+        analysis = watsonx.analyze_bottlenecks(data)
+        high_priority = [b for b in analysis.get("bottlenecks", []) if b.get("severity") == "high"]
+        
+        response_text = "**High Priority Issues**\n\n"
+        if high_priority:
+            response_text += f"Found {len(high_priority)} critical issues:\n\n"
+            for i, b in enumerate(high_priority[:5], 1):
+                response_text += f"{i}. **{b['title']}**\n"
+                response_text += f"   Impact: {b.get('impact', b['description'])}\n"
+                response_text += f"   Fix: {b.get('recommendation', 'See recommendations')}\n\n"
+        else:
+            response_text += "No high priority issues detected. Team is in good shape!"
+    
+    # Slack / communication
+    elif "slack" in user_content or "communication" in user_content or "response time" in user_content:
+        slack = data["slack"]["summary"]
+        response_text = "**Communication Metrics**\n\n"
+        response_text += f"Avg Response Time: **{slack['avg_response_time_mins']} minutes**\n"
+        response_text += f"Active Threads: {slack['active_threads']}\n"
+        response_text += f"Meeting Time: {slack['meeting_time_percentage']}%\n"
+        response_text += f"Messages per Day: {slack.get('messages_per_day', 0)}\n"
+        
+        if slack['avg_response_time_mins'] > 60:
+            response_text += "\nNote: Response times are high. Consider setting expectations for async communication."
+    
+    # Health score
+    elif "health" in user_content or "score" in user_content or "status" in user_content:
+        analysis = watsonx.analyze_bottlenecks(data)
+        score = analysis['health_score']
+        status = analysis['health_status']
+        
+        response_text = f"**Team Health Score: {score}/100**\n\n"
+        
+        if status == 'healthy':
+            response_text += "Status: Healthy\n"
+            response_text += "Team workflows are running smoothly."
+        elif status == 'warning':
+            response_text += "Status: Needs Attention\n"
+            response_text += "Some bottlenecks detected that should be addressed."
+        else:
+            response_text += "Status: Critical\n"
+            response_text += "Multiple significant bottlenecks impacting team velocity."
+        
+        response_text += f"\n\nBottlenecks: {len(analysis['bottlenecks'])}"
+        if analysis['bottlenecks']:
+            response_text += f"\nTop Issue: {analysis['bottlenecks'][0]['title']}"
+        
+    # Bottleneck analysis
+    elif "bottleneck" in user_content or "analyze" in user_content or "analysis" in user_content or "issue" in user_content:
+        analysis = watsonx.analyze_bottlenecks(data)
+        response_text = f"**Bottleneck Analysis Results**\n\n"
         response_text += f"Health Score: {analysis['health_score']}/100\n\n"
         response_text += "**Detected Bottlenecks:**\n"
         for b in analysis['bottlenecks'][:5]:
-            response_text += f"- {b['icon']} **{b['title']}** ({b['severity']}): {b['description']}\n"
+            response_text += f"- **{b['title']}** ({b['severity']}): {b['description']}\n"
             
-    elif "recommend" in user_content:
+    # Recommendations
+    elif "recommend" in user_content or "suggest" in user_content or "action" in user_content or "fix" in user_content:
         analysis = watsonx.analyze_bottlenecks(data)
         recommendations = watsonx.generate_recommendations(analysis)
-        response_text = "💡 **Recommendations**\n\n"
-        for rec in recommendations[:5]:
-            response_text += f"- **{rec['title']}** (Priority: {rec['priority']})\n"
+        response_text = "**Recommendations**\n\n"
+        for i, rec in enumerate(recommendations[:5], 1):
+            response_text += f"{i}. **{rec['title']}** (Priority: {rec['priority']})\n"
+            if rec.get('actions'):
+                for action in rec['actions'][:2]:
+                    response_text += f"   - {action['description']}\n"
+            response_text += "\n"
             
-    elif "github" in user_content:
+    # GitHub metrics
+    elif "github" in user_content or "pr" in user_content or "pull request" in user_content or "code review" in user_content:
         github = data["github"]["summary"]
-        response_text = f"📊 **GitHub Metrics**\n\n"
-        response_text += f"- Total PRs: {github['total_prs']}\n"
-        response_text += f"- Avg Review Time: {github['avg_review_time_hours']} hours\n"
-        response_text += f"- Pending Reviews: {github['pending_reviews']}"
+        response_text = "**GitHub Metrics**\n\n"
+        response_text += f"Total PRs: {github['total_prs']}\n"
+        response_text += f"Avg Review Time: {github['avg_review_time_hours']} hours\n"
+        response_text += f"Pending Reviews: {github['pending_reviews']}\n"
+        response_text += f"Merged This Week: {github.get('merged_this_week', 0)}\n"
         
-    elif "jira" in user_content:
+        if github['avg_review_time_hours'] > 24:
+            response_text += "\nAlert: Review times exceed 24 hours. Consider review rotation."
+        
+    # Jira metrics
+    elif "jira" in user_content or "ticket" in user_content or "sprint" in user_content or "velocity" in user_content:
         jira = data["jira"]["summary"]
-        response_text = f"📋 **Jira Metrics**\n\n"
-        response_text += f"- Total Tickets: {jira['total_tickets']}\n"
-        response_text += f"- Blocked: {jira['blocked_count']}\n"
-        response_text += f"- Velocity: {jira['velocity']} points"
+        response_text = "**Jira Metrics**\n\n"
+        response_text += f"Total Tickets: {jira['total_tickets']}\n"
+        response_text += f"Blocked: {jira['blocked_count']}\n"
+        response_text += f"Velocity: {jira['velocity']} points\n"
+        response_text += f"In Progress: {jira.get('in_progress', 0)}\n"
+        response_text += f"Completed: {jira.get('completed', 0)}\n"
         
+    # Default help message
     else:
-        response_text = "👋 I'm the Bottleneck Detector! I can help you with:\n\n"
-        response_text += "- **Analyze bottlenecks** - Run a full workflow analysis\n"
-        response_text += "- **Get health score** - Check team health (0-100)\n"
-        response_text += "- **Get recommendations** - AI-suggested improvements\n"
-        response_text += "- **GitHub/Jira data** - View specific metrics\n\n"
-        response_text += "What would you like to know?"
+        response_text = "**Bottleneck Detector Assistant**\n\n"
+        response_text += "I can help you understand your team's workflow health. Try asking:\n\n"
+        response_text += "**Analysis:**\n"
+        response_text += "- \"Analyze bottlenecks\" - Full workflow analysis\n"
+        response_text += "- \"What's our health score?\" - Team health status\n"
+        response_text += "- \"Show priority issues\" - Critical problems\n\n"
+        response_text += "**Team Insights:**\n"
+        response_text += "- \"Who has the most review load?\" - Workload distribution\n"
+        response_text += "- \"Show meeting time analysis\" - Time allocation\n"
+        response_text += "- \"Any knowledge silos?\" - Bus factor risks\n\n"
+        response_text += "**Metrics:**\n"
+        response_text += "- \"GitHub metrics\" - PR and review stats\n"
+        response_text += "- \"Jira status\" - Ticket flow data\n"
+        response_text += "- \"CI/CD status\" - Pipeline health\n"
+        response_text += "- \"What's blocked?\" - Impediments\n\n"
+        response_text += "**Trends:**\n"
+        response_text += "- \"Compare to last week\" - Historical changes\n"
+        response_text += "- \"What recommendations do you have?\" - Action items"
     
     # Return response in multiple formats for compatibility
     return jsonify({
@@ -421,6 +739,99 @@ def get_orchestrate_skills():
     
     return jsonify({"service": "Silent Bottleneck Detector", "version": "1.0.0", "skills": skills})
 
+
+@app.route("/api/actions", methods=["POST"])
+def execute_action():
+    """Execute a self-healing action"""
+    body = request.get_json() or {}
+    action_type = body.get("type", "").lower()
+    
+    # Get current state
+    if db.enabled:
+        data = db.get_latest_analysis()
+        if not data: data = get_mock_data(30)
+    else:
+        # In mock mode, we need to modify the global cache or regenerate
+        data = get_mock_data(30)
+        
+    response_msg = ""
+    changes_made = False
+    
+    if action_type == "rebalance_workload":
+        # Logic: Find overloaded reviewer, move load to others
+        github = data["github"]
+        reviewers = github.get("reviewers", [])
+        if reviewers:
+            # Sort by review count desc
+            reviewers.sort(key=lambda x: x.get("review_count", 0), reverse=True)
+            overloaded = reviewers[0]
+            underloaded = reviewers[-1]
+            
+            # Transfer 30% of load
+            transfer = int(overloaded["review_count"] * 0.3)
+            if transfer > 0:
+                overloaded["review_count"] -= transfer
+                underloaded["review_count"] += transfer
+                
+                # Recalculate percentages (rough approx)
+                total = sum(r["review_count"] for r in reviewers)
+                for r in reviewers:
+                    r["percentage"] = round((r["review_count"] / total) * 100, 1)
+                
+                # Also improve review time as a result
+                github["summary"]["avg_review_time_hours"] = max(4.0, github["summary"]["avg_review_time_hours"] * 0.7)
+                
+                response_msg = f"✅ **Workload Rebalanced:** Transferred {transfer} reviews from {overloaded['name']} to {underloaded['name']}. Est. review time improved."
+                changes_made = True
+                
+    elif action_type == "resolve_blockers":
+        # Logic: Clear blocked tickets
+        jira = data["jira"]["summary"]
+        blocked = jira.get("blocked_count", 0)
+        
+        if blocked > 0:
+            jira["blocked_count"] = 0
+            jira["in_progress"] += blocked
+            # Improve velocity
+            jira["velocity"] += int(blocked * 3)
+            
+            response_msg = f"✅ **Blockers Resolved:** Unblocked {blocked} tickets. Team velocity projected to increase."
+            changes_made = True
+        else:
+            response_msg = "ℹ️ No blocked tickets found to resolve."
+
+    elif action_type == "optimize_meetings":
+         # Logic: Reduce meeting time
+         slack = data["slack"]["summary"]
+         current_mtg = slack.get("meeting_time_percentage", 0)
+         if current_mtg > 20:
+             new_mtg = int(current_mtg * 0.7)
+             slack["meeting_time_percentage"] = new_mtg
+             # Improve focus time -> better PR output
+             data["github"]["summary"]["total_prs"] += 4
+             
+             response_msg = f"✅ **Calendar Optimized:** Implemented 'No-Meeting Wednesday'. Meeting load reduced to {new_mtg}%."
+             changes_made = True
+         else:
+             response_msg = "ℹ️ Meeting load is already within healthy limits."
+
+    else:
+        return jsonify({"error": "Unknown action type"}), 400
+
+    # Save changes if made
+    if changes_made and db.enabled:
+        # Re-run analysis to update health score based on new data
+        watsonx = get_watsonx_client()
+        new_analysis = watsonx.analyze_bottlenecks(data)
+        # Merge analysis results back into data
+        data.update(new_analysis) 
+        db.save_analysis(data)
+
+    return jsonify({
+        "status": "success", 
+        "message": response_msg,
+        "data_updated": changes_made
+    })
 
 if __name__ == "__main__":
     port = int(os.getenv("PORT", 5001))

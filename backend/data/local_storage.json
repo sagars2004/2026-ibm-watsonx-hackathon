@@ -884,6 +884,1366 @@
         ]
       },
       "created_at": "2026-01-30T15:26:05.992139"
+    },
+    {
+      "_id": "analysis_20260130_153242",
+      "type": "analysis",
+      "data": {
+        "analysis_id": "analysis_20260130_153242",
+        "timestamp": "2026-01-30T15:32:42.268885",
+        "health_score": 31,
+        "health_status": "critical",
+        "bottlenecks": [
+          {
+            "type": "single_point_of_failure",
+            "severity": "high",
+            "title": "PR Review Concentration",
+            "description": "Sarah Chen approved 81.7% of all PRs last month",
+            "impact": "Team velocity is at risk if this person is unavailable.",
+            "recommendation": "Train 2 more developers on code review best practices",
+            "icon": "\ud83d\udea8",
+            "metric_value": "81.7%",
+            "metric_label": "PRs reviewed by one person"
+          },
+          {
+            "type": "flaky_process",
+            "severity": "high",
+            "title": "Flaky CI/CD Pipeline",
+            "description": "'integration-test' stage fails 36.7% of the time",
+            "impact": "Developers waste time re-running builds",
+            "recommendation": "Investigate and fix flaky tests in integration-test",
+            "icon": "\ud83d\udd04",
+            "metric_value": "36.7%",
+            "metric_label": "pipeline failure rate"
+          },
+          {
+            "type": "meeting_overload",
+            "severity": "high",
+            "title": "Excessive Meeting Time",
+            "description": "Team spent 42.5% of time in meetings (healthy target: <20%)",
+            "impact": "Reduced focus time for deep work",
+            "recommendation": "Audit recurring meetings, implement 'No Meeting Wednesdays'",
+            "icon": "\ud83d\udcac",
+            "metric_value": "42.5%",
+            "metric_label": "time in meetings"
+          },
+          {
+            "type": "hidden_delay",
+            "severity": "medium",
+            "title": "Deploy Queue Bottleneck",
+            "description": "Average time from PR-approved to deployed: 9.8 hours",
+            "impact": "Features sit idle waiting for deployment",
+            "recommendation": "Automate deploy pipeline to run immediately after approval",
+            "icon": "\u23f0",
+            "metric_value": "9.8h",
+            "metric_label": "avg deploy delay"
+          },
+          {
+            "type": "knowledge_silo",
+            "severity": "medium",
+            "title": "Knowledge Silo: Payments",
+            "description": "Only 2 people have touched payments code",
+            "impact": "Critical system at risk if these people leave",
+            "recommendation": "Schedule knowledge-sharing sessions for payments",
+            "icon": "\ud83d\udd10",
+            "metric_value": "2",
+            "metric_label": "contributors (bus factor)"
+          },
+          {
+            "type": "blocked_work",
+            "severity": "medium",
+            "title": "Stalled Tickets in Review",
+            "description": "10 tickets blocked waiting for review",
+            "impact": "Sprint velocity impacted",
+            "recommendation": "Set up daily review rotation and max 24-hour review SLA",
+            "icon": "\ud83d\udeab",
+            "metric_value": "10",
+            "metric_label": "blocked tickets"
+          }
+        ],
+        "trends": {
+          "health_score_change": -3,
+          "new_bottlenecks": 3,
+          "resolved_bottlenecks": 1
+        },
+        "summary": "Detected 6 bottlenecks. Health score: 31/100.",
+        "recommendations": [
+          {
+            "id": "rec_1",
+            "title": "Train 2 more developers on code review best practices",
+            "related_bottleneck": "PR Review Concentration",
+            "priority": "high",
+            "status": "pending",
+            "actions": [
+              {
+                "type": "create_jira_ticket",
+                "description": "Create training ticket for code review best practices"
+              },
+              {
+                "type": "slack_message",
+                "description": "Notify team about review load distribution"
+              }
+            ]
+          },
+          {
+            "id": "rec_2",
+            "title": "Investigate and fix flaky tests in integration-test",
+            "related_bottleneck": "Flaky CI/CD Pipeline",
+            "priority": "high",
+            "status": "pending",
+            "actions": [
+              {
+                "type": "create_jira_ticket",
+                "description": "Investigate and fix flaky tests"
+              },
+              {
+                "type": "slack_message",
+                "description": "Alert team about pipeline reliability issues"
+              }
+            ]
+          },
+          {
+            "id": "rec_3",
+            "title": "Audit recurring meetings, implement 'No Meeting Wednesdays'",
+            "related_bottleneck": "Excessive Meeting Time",
+            "priority": "high",
+            "status": "pending",
+            "actions": [
+              {
+                "type": "slack_message",
+                "description": "Propose 'No Meeting Wednesday' policy"
+              }
+            ]
+          },
+          {
+            "id": "rec_4",
+            "title": "Automate deploy pipeline to run immediately after approval",
+            "related_bottleneck": "Deploy Queue Bottleneck",
+            "priority": "medium",
+            "status": "pending",
+            "actions": [
+              {
+                "type": "create_jira_ticket",
+                "description": "Automate deployment pipeline"
+              }
+            ]
+          },
+          {
+            "id": "rec_5",
+            "title": "Schedule knowledge-sharing sessions for payments",
+            "related_bottleneck": "Knowledge Silo: Payments",
+            "priority": "medium",
+            "status": "pending",
+            "actions": [
+              {
+                "type": "schedule_meeting",
+                "description": "Schedule knowledge-sharing session"
+              }
+            ]
+          },
+          {
+            "id": "rec_6",
+            "title": "Set up daily review rotation and max 24-hour review SLA",
+            "related_bottleneck": "Stalled Tickets in Review",
+            "priority": "medium",
+            "status": "pending",
+            "actions": [
+              {
+                "type": "create_jira_ticket",
+                "description": "Define review SLA policy"
+              }
+            ]
+          }
+        ]
+      },
+      "created_at": "2026-01-30T15:32:42.268946"
+    },
+    {
+      "_id": "analysis_20260130_153302",
+      "type": "analysis",
+      "data": {
+        "analysis_id": "analysis_20260130_153302",
+        "timestamp": "2026-01-30T15:33:02.333760",
+        "health_score": 39,
+        "health_status": "critical",
+        "bottlenecks": [
+          {
+            "type": "single_point_of_failure",
+            "severity": "high",
+            "title": "PR Review Concentration",
+            "description": "Sarah Chen approved 86.7% of all PRs last month",
+            "impact": "Team velocity is at risk if this person is unavailable.",
+            "recommendation": "Train 2 more developers on code review best practices",
+            "icon": "\ud83d\udea8",
+            "metric_value": "86.7%",
+            "metric_label": "PRs reviewed by one person"
+          },
+          {
+            "type": "flaky_process",
+            "severity": "high",
+            "title": "Flaky CI/CD Pipeline",
+            "description": "'integration-test' stage fails 37.5% of the time",
+            "impact": "Developers waste time re-running builds",
+            "recommendation": "Investigate and fix flaky tests in integration-test",
+            "icon": "\ud83d\udd04",
+            "metric_value": "37.5%",
+            "metric_label": "pipeline failure rate"
+          },
+          {
+            "type": "meeting_overload",
+            "severity": "high",
+            "title": "Excessive Meeting Time",
+            "description": "Team spent 42.1% of time in meetings (healthy target: <20%)",
+            "impact": "Reduced focus time for deep work",
+            "recommendation": "Audit recurring meetings, implement 'No Meeting Wednesdays'",
+            "icon": "\ud83d\udcac",
+            "metric_value": "42.1%",
+            "metric_label": "time in meetings"
+          },
+          {
+            "type": "knowledge_silo",
+            "severity": "medium",
+            "title": "Knowledge Silo: Auth",
+            "description": "Only 2 people have touched auth code",
+            "impact": "Critical system at risk if these people leave",
+            "recommendation": "Schedule knowledge-sharing sessions for auth",
+            "icon": "\ud83d\udd10",
+            "metric_value": "2",
+            "metric_label": "contributors (bus factor)"
+          },
+          {
+            "type": "blocked_work",
+            "severity": "medium",
+            "title": "Stalled Tickets in Review",
+            "description": "11 tickets blocked waiting for review",
+            "impact": "Sprint velocity impacted",
+            "recommendation": "Set up daily review rotation and max 24-hour review SLA",
+            "icon": "\ud83d\udeab",
+            "metric_value": "11",
+            "metric_label": "blocked tickets"
+          }
+        ],
+        "trends": {
+          "health_score_change": 2,
+          "new_bottlenecks": 3,
+          "resolved_bottlenecks": 0
+        },
+        "summary": "Detected 5 bottlenecks. Health score: 39/100.",
+        "recommendations": [
+          {
+            "id": "rec_1",
+            "title": "Train 2 more developers on code review best practices",
+            "related_bottleneck": "PR Review Concentration",
+            "priority": "high",
+            "status": "pending",
+            "actions": [
+              {
+                "type": "create_jira_ticket",
+                "description": "Create training ticket for code review best practices"
+              },
+              {
+                "type": "slack_message",
+                "description": "Notify team about review load distribution"
+              }
+            ]
+          },
+          {
+            "id": "rec_2",
+            "title": "Investigate and fix flaky tests in integration-test",
+            "related_bottleneck": "Flaky CI/CD Pipeline",
+            "priority": "high",
+            "status": "pending",
+            "actions": [
+              {
+                "type": "create_jira_ticket",
+                "description": "Investigate and fix flaky tests"
+              },
+              {
+                "type": "slack_message",
+                "description": "Alert team about pipeline reliability issues"
+              }
+            ]
+          },
+          {
+            "id": "rec_3",
+            "title": "Audit recurring meetings, implement 'No Meeting Wednesdays'",
+            "related_bottleneck": "Excessive Meeting Time",
+            "priority": "high",
+            "status": "pending",
+            "actions": [
+              {
+                "type": "slack_message",
+                "description": "Propose 'No Meeting Wednesday' policy"
+              }
+            ]
+          },
+          {
+            "id": "rec_4",
+            "title": "Schedule knowledge-sharing sessions for auth",
+            "related_bottleneck": "Knowledge Silo: Auth",
+            "priority": "medium",
+            "status": "pending",
+            "actions": [
+              {
+                "type": "schedule_meeting",
+                "description": "Schedule knowledge-sharing session"
+              }
+            ]
+          },
+          {
+            "id": "rec_5",
+            "title": "Set up daily review rotation and max 24-hour review SLA",
+            "related_bottleneck": "Stalled Tickets in Review",
+            "priority": "medium",
+            "status": "pending",
+            "actions": [
+              {
+                "type": "create_jira_ticket",
+                "description": "Define review SLA policy"
+              }
+            ]
+          }
+        ]
+      },
+      "created_at": "2026-01-30T15:33:02.333794"
+    },
+    {
+      "_id": "analysis_20260130_174500",
+      "type": "analysis",
+      "data": {
+        "analysis_id": "analysis_20260130_174500",
+        "timestamp": "2026-01-30T17:45:00.341224",
+        "health_score": 31,
+        "health_status": "critical",
+        "bottlenecks": [
+          {
+            "type": "single_point_of_failure",
+            "severity": "high",
+            "title": "PR Review Concentration",
+            "description": "Sarah Chen approved 83.3% of all PRs last month",
+            "impact": "Team velocity is at risk if this person is unavailable.",
+            "recommendation": "Train 2 more developers on code review best practices",
+            "icon": "\ud83d\udea8",
+            "metric_value": "83.3%",
+            "metric_label": "PRs reviewed by one person"
+          },
+          {
+            "type": "flaky_process",
+            "severity": "high",
+            "title": "Flaky CI/CD Pipeline",
+            "description": "'integration-test' stage fails 42.5% of the time",
+            "impact": "Developers waste time re-running builds",
+            "recommendation": "Investigate and fix flaky tests in integration-test",
+            "icon": "\ud83d\udd04",
+            "metric_value": "42.5%",
+            "metric_label": "pipeline failure rate"
+          },
+          {
+            "type": "meeting_overload",
+            "severity": "high",
+            "title": "Excessive Meeting Time",
+            "description": "Team spent 41.2% of time in meetings (healthy target: <20%)",
+            "impact": "Reduced focus time for deep work",
+            "recommendation": "Audit recurring meetings, implement 'No Meeting Wednesdays'",
+            "icon": "\ud83d\udcac",
+            "metric_value": "41.2%",
+            "metric_label": "time in meetings"
+          },
+          {
+            "type": "hidden_delay",
+            "severity": "medium",
+            "title": "Deploy Queue Bottleneck",
+            "description": "Average time from PR-approved to deployed: 9.5 hours",
+            "impact": "Features sit idle waiting for deployment",
+            "recommendation": "Automate deploy pipeline to run immediately after approval",
+            "icon": "\u23f0",
+            "metric_value": "9.5h",
+            "metric_label": "avg deploy delay"
+          },
+          {
+            "type": "knowledge_silo",
+            "severity": "medium",
+            "title": "Knowledge Silo: Payments",
+            "description": "Only 2 people have touched payments code",
+            "impact": "Critical system at risk if these people leave",
+            "recommendation": "Schedule knowledge-sharing sessions for payments",
+            "icon": "\ud83d\udd10",
+            "metric_value": "2",
+            "metric_label": "contributors (bus factor)"
+          },
+          {
+            "type": "blocked_work",
+            "severity": "medium",
+            "title": "Stalled Tickets in Review",
+            "description": "10 tickets blocked waiting for review",
+            "impact": "Sprint velocity impacted",
+            "recommendation": "Set up daily review rotation and max 24-hour review SLA",
+            "icon": "\ud83d\udeab",
+            "metric_value": "10",
+            "metric_label": "blocked tickets"
+          }
+        ],
+        "trends": {
+          "health_score_change": -8,
+          "new_bottlenecks": 3,
+          "resolved_bottlenecks": 2
+        },
+        "summary": "Detected 6 bottlenecks. Health score: 31/100.",
+        "recommendations": [
+          {
+            "id": "rec_1",
+            "title": "Train 2 more developers on code review best practices",
+            "related_bottleneck": "PR Review Concentration",
+            "priority": "high",
+            "status": "pending",
+            "actions": [
+              {
+                "type": "create_jira_ticket",
+                "description": "Create training ticket for code review best practices"
+              },
+              {
+                "type": "slack_message",
+                "description": "Notify team about review load distribution"
+              }
+            ]
+          },
+          {
+            "id": "rec_2",
+            "title": "Investigate and fix flaky tests in integration-test",
+            "related_bottleneck": "Flaky CI/CD Pipeline",
+            "priority": "high",
+            "status": "pending",
+            "actions": [
+              {
+                "type": "create_jira_ticket",
+                "description": "Investigate and fix flaky tests"
+              },
+              {
+                "type": "slack_message",
+                "description": "Alert team about pipeline reliability issues"
+              }
+            ]
+          },
+          {
+            "id": "rec_3",
+            "title": "Audit recurring meetings, implement 'No Meeting Wednesdays'",
+            "related_bottleneck": "Excessive Meeting Time",
+            "priority": "high",
+            "status": "pending",
+            "actions": [
+              {
+                "type": "slack_message",
+                "description": "Propose 'No Meeting Wednesday' policy"
+              }
+            ]
+          },
+          {
+            "id": "rec_4",
+            "title": "Automate deploy pipeline to run immediately after approval",
+            "related_bottleneck": "Deploy Queue Bottleneck",
+            "priority": "medium",
+            "status": "pending",
+            "actions": [
+              {
+                "type": "create_jira_ticket",
+                "description": "Automate deployment pipeline"
+              }
+            ]
+          },
+          {
+            "id": "rec_5",
+            "title": "Schedule knowledge-sharing sessions for payments",
+            "related_bottleneck": "Knowledge Silo: Payments",
+            "priority": "medium",
+            "status": "pending",
+            "actions": [
+              {
+                "type": "schedule_meeting",
+                "description": "Schedule knowledge-sharing session"
+              }
+            ]
+          },
+          {
+            "id": "rec_6",
+            "title": "Set up daily review rotation and max 24-hour review SLA",
+            "related_bottleneck": "Stalled Tickets in Review",
+            "priority": "medium",
+            "status": "pending",
+            "actions": [
+              {
+                "type": "create_jira_ticket",
+                "description": "Define review SLA policy"
+              }
+            ]
+          }
+        ]
+      },
+      "created_at": "2026-01-30T17:45:00.341272"
+    },
+    {
+      "_id": "analysis_20260130_181427",
+      "type": "analysis",
+      "data": {
+        "analysis_id": "analysis_20260130_181427",
+        "timestamp": "2026-01-30T18:14:27.350421",
+        "health_score": 31,
+        "health_status": "critical",
+        "bottlenecks": [
+          {
+            "type": "single_point_of_failure",
+            "severity": "high",
+            "title": "PR Review Concentration",
+            "description": "Sarah Chen approved 70.0% of all PRs last month",
+            "impact": "Team velocity is at risk if this person is unavailable.",
+            "recommendation": "Train 2 more developers on code review best practices",
+            "icon": "\ud83d\udea8",
+            "metric_value": "70.0%",
+            "metric_label": "PRs reviewed by one person"
+          },
+          {
+            "type": "flaky_process",
+            "severity": "high",
+            "title": "Flaky CI/CD Pipeline",
+            "description": "'integration-test' stage fails 39.2% of the time",
+            "impact": "Developers waste time re-running builds",
+            "recommendation": "Investigate and fix flaky tests in integration-test",
+            "icon": "\ud83d\udd04",
+            "metric_value": "39.2%",
+            "metric_label": "pipeline failure rate"
+          },
+          {
+            "type": "meeting_overload",
+            "severity": "high",
+            "title": "Excessive Meeting Time",
+            "description": "Team spent 43.7% of time in meetings (healthy target: <20%)",
+            "impact": "Reduced focus time for deep work",
+            "recommendation": "Audit recurring meetings, implement 'No Meeting Wednesdays'",
+            "icon": "\ud83d\udcac",
+            "metric_value": "43.7%",
+            "metric_label": "time in meetings"
+          },
+          {
+            "type": "hidden_delay",
+            "severity": "medium",
+            "title": "Deploy Queue Bottleneck",
+            "description": "Average time from PR-approved to deployed: 9.6 hours",
+            "impact": "Features sit idle waiting for deployment",
+            "recommendation": "Automate deploy pipeline to run immediately after approval",
+            "icon": "\u23f0",
+            "metric_value": "9.6h",
+            "metric_label": "avg deploy delay"
+          },
+          {
+            "type": "knowledge_silo",
+            "severity": "medium",
+            "title": "Knowledge Silo: Auth",
+            "description": "Only 2 people have touched auth code",
+            "impact": "Critical system at risk if these people leave",
+            "recommendation": "Schedule knowledge-sharing sessions for auth",
+            "icon": "\ud83d\udd10",
+            "metric_value": "2",
+            "metric_label": "contributors (bus factor)"
+          },
+          {
+            "type": "blocked_work",
+            "severity": "medium",
+            "title": "Stalled Tickets in Review",
+            "description": "14 tickets blocked waiting for review",
+            "impact": "Sprint velocity impacted",
+            "recommendation": "Set up daily review rotation and max 24-hour review SLA",
+            "icon": "\ud83d\udeab",
+            "metric_value": "14",
+            "metric_label": "blocked tickets"
+          }
+        ],
+        "trends": {
+          "health_score_change": -8,
+          "new_bottlenecks": 3,
+          "resolved_bottlenecks": 2
+        },
+        "summary": "Detected 6 bottlenecks. Health score: 31/100.",
+        "recommendations": [
+          {
+            "id": "rec_1",
+            "title": "Train 2 more developers on code review best practices",
+            "related_bottleneck": "PR Review Concentration",
+            "priority": "high",
+            "status": "pending",
+            "actions": [
+              {
+                "type": "create_jira_ticket",
+                "description": "Create training ticket for code review best practices"
+              },
+              {
+                "type": "slack_message",
+                "description": "Notify team about review load distribution"
+              }
+            ]
+          },
+          {
+            "id": "rec_2",
+            "title": "Investigate and fix flaky tests in integration-test",
+            "related_bottleneck": "Flaky CI/CD Pipeline",
+            "priority": "high",
+            "status": "pending",
+            "actions": [
+              {
+                "type": "create_jira_ticket",
+                "description": "Investigate and fix flaky tests"
+              },
+              {
+                "type": "slack_message",
+                "description": "Alert team about pipeline reliability issues"
+              }
+            ]
+          },
+          {
+            "id": "rec_3",
+            "title": "Audit recurring meetings, implement 'No Meeting Wednesdays'",
+            "related_bottleneck": "Excessive Meeting Time",
+            "priority": "high",
+            "status": "pending",
+            "actions": [
+              {
+                "type": "slack_message",
+                "description": "Propose 'No Meeting Wednesday' policy"
+              }
+            ]
+          },
+          {
+            "id": "rec_4",
+            "title": "Automate deploy pipeline to run immediately after approval",
+            "related_bottleneck": "Deploy Queue Bottleneck",
+            "priority": "medium",
+            "status": "pending",
+            "actions": [
+              {
+                "type": "create_jira_ticket",
+                "description": "Automate deployment pipeline"
+              }
+            ]
+          },
+          {
+            "id": "rec_5",
+            "title": "Schedule knowledge-sharing sessions for auth",
+            "related_bottleneck": "Knowledge Silo: Auth",
+            "priority": "medium",
+            "status": "pending",
+            "actions": [
+              {
+                "type": "schedule_meeting",
+                "description": "Schedule knowledge-sharing session"
+              }
+            ]
+          },
+          {
+            "id": "rec_6",
+            "title": "Set up daily review rotation and max 24-hour review SLA",
+            "related_bottleneck": "Stalled Tickets in Review",
+            "priority": "medium",
+            "status": "pending",
+            "actions": [
+              {
+                "type": "create_jira_ticket",
+                "description": "Define review SLA policy"
+              }
+            ]
+          }
+        ]
+      },
+      "created_at": "2026-01-30T18:14:27.350455"
+    },
+    {
+      "_id": "analysis_20260130_181621",
+      "type": "analysis",
+      "data": {
+        "analysis_id": "analysis_20260130_181621",
+        "timestamp": "2026-01-30T18:16:21.353845",
+        "health_score": 31,
+        "health_status": "critical",
+        "bottlenecks": [
+          {
+            "type": "single_point_of_failure",
+            "severity": "high",
+            "title": "PR Review Concentration",
+            "description": "Sarah Chen approved 83.3% of all PRs last month",
+            "impact": "Team velocity is at risk if this person is unavailable.",
+            "recommendation": "Train 2 more developers on code review best practices",
+            "icon": "\ud83d\udea8",
+            "metric_value": "83.3%",
+            "metric_label": "PRs reviewed by one person"
+          },
+          {
+            "type": "flaky_process",
+            "severity": "high",
+            "title": "Flaky CI/CD Pipeline",
+            "description": "'integration-test' stage fails 41.7% of the time",
+            "impact": "Developers waste time re-running builds",
+            "recommendation": "Investigate and fix flaky tests in integration-test",
+            "icon": "\ud83d\udd04",
+            "metric_value": "41.7%",
+            "metric_label": "pipeline failure rate"
+          },
+          {
+            "type": "meeting_overload",
+            "severity": "high",
+            "title": "Excessive Meeting Time",
+            "description": "Team spent 43.8% of time in meetings (healthy target: <20%)",
+            "impact": "Reduced focus time for deep work",
+            "recommendation": "Audit recurring meetings, implement 'No Meeting Wednesdays'",
+            "icon": "\ud83d\udcac",
+            "metric_value": "43.8%",
+            "metric_label": "time in meetings"
+          },
+          {
+            "type": "hidden_delay",
+            "severity": "medium",
+            "title": "Deploy Queue Bottleneck",
+            "description": "Average time from PR-approved to deployed: 8.6 hours",
+            "impact": "Features sit idle waiting for deployment",
+            "recommendation": "Automate deploy pipeline to run immediately after approval",
+            "icon": "\u23f0",
+            "metric_value": "8.6h",
+            "metric_label": "avg deploy delay"
+          },
+          {
+            "type": "knowledge_silo",
+            "severity": "medium",
+            "title": "Knowledge Silo: Payments",
+            "description": "Only 2 people have touched payments code",
+            "impact": "Critical system at risk if these people leave",
+            "recommendation": "Schedule knowledge-sharing sessions for payments",
+            "icon": "\ud83d\udd10",
+            "metric_value": "2",
+            "metric_label": "contributors (bus factor)"
+          },
+          {
+            "type": "blocked_work",
+            "severity": "medium",
+            "title": "Stalled Tickets in Review",
+            "description": "25 tickets blocked waiting for review",
+            "impact": "Sprint velocity impacted",
+            "recommendation": "Set up daily review rotation and max 24-hour review SLA",
+            "icon": "\ud83d\udeab",
+            "metric_value": "25",
+            "metric_label": "blocked tickets"
+          }
+        ],
+        "trends": {
+          "health_score_change": -8,
+          "new_bottlenecks": 3,
+          "resolved_bottlenecks": 0
+        },
+        "summary": "Detected 6 bottlenecks. Health score: 31/100.",
+        "recommendations": [
+          {
+            "id": "rec_1",
+            "title": "Train 2 more developers on code review best practices",
+            "related_bottleneck": "PR Review Concentration",
+            "priority": "high",
+            "status": "pending",
+            "actions": [
+              {
+                "type": "create_jira_ticket",
+                "description": "Create training ticket for code review best practices"
+              },
+              {
+                "type": "slack_message",
+                "description": "Notify team about review load distribution"
+              }
+            ]
+          },
+          {
+            "id": "rec_2",
+            "title": "Investigate and fix flaky tests in integration-test",
+            "related_bottleneck": "Flaky CI/CD Pipeline",
+            "priority": "high",
+            "status": "pending",
+            "actions": [
+              {
+                "type": "create_jira_ticket",
+                "description": "Investigate and fix flaky tests"
+              },
+              {
+                "type": "slack_message",
+                "description": "Alert team about pipeline reliability issues"
+              }
+            ]
+          },
+          {
+            "id": "rec_3",
+            "title": "Audit recurring meetings, implement 'No Meeting Wednesdays'",
+            "related_bottleneck": "Excessive Meeting Time",
+            "priority": "high",
+            "status": "pending",
+            "actions": [
+              {
+                "type": "slack_message",
+                "description": "Propose 'No Meeting Wednesday' policy"
+              }
+            ]
+          },
+          {
+            "id": "rec_4",
+            "title": "Automate deploy pipeline to run immediately after approval",
+            "related_bottleneck": "Deploy Queue Bottleneck",
+            "priority": "medium",
+            "status": "pending",
+            "actions": [
+              {
+                "type": "create_jira_ticket",
+                "description": "Automate deployment pipeline"
+              }
+            ]
+          },
+          {
+            "id": "rec_5",
+            "title": "Schedule knowledge-sharing sessions for payments",
+            "related_bottleneck": "Knowledge Silo: Payments",
+            "priority": "medium",
+            "status": "pending",
+            "actions": [
+              {
+                "type": "schedule_meeting",
+                "description": "Schedule knowledge-sharing session"
+              }
+            ]
+          },
+          {
+            "id": "rec_6",
+            "title": "Set up daily review rotation and max 24-hour review SLA",
+            "related_bottleneck": "Stalled Tickets in Review",
+            "priority": "medium",
+            "status": "pending",
+            "actions": [
+              {
+                "type": "create_jira_ticket",
+                "description": "Define review SLA policy"
+              }
+            ]
+          }
+        ]
+      },
+      "created_at": "2026-01-30T18:16:21.353862"
+    },
+    {
+      "_id": "analysis_20260130_181624",
+      "type": "analysis",
+      "data": {
+        "analysis_id": "analysis_20260130_181624",
+        "timestamp": "2026-01-30T18:16:24.306227",
+        "health_score": 31,
+        "health_status": "critical",
+        "bottlenecks": [
+          {
+            "type": "single_point_of_failure",
+            "severity": "high",
+            "title": "PR Review Concentration",
+            "description": "Sarah Chen approved 75.0% of all PRs last month",
+            "impact": "Team velocity is at risk if this person is unavailable.",
+            "recommendation": "Train 2 more developers on code review best practices",
+            "icon": "\ud83d\udea8",
+            "metric_value": "75.0%",
+            "metric_label": "PRs reviewed by one person"
+          },
+          {
+            "type": "flaky_process",
+            "severity": "high",
+            "title": "Flaky CI/CD Pipeline",
+            "description": "'integration-test' stage fails 38.3% of the time",
+            "impact": "Developers waste time re-running builds",
+            "recommendation": "Investigate and fix flaky tests in integration-test",
+            "icon": "\ud83d\udd04",
+            "metric_value": "38.3%",
+            "metric_label": "pipeline failure rate"
+          },
+          {
+            "type": "meeting_overload",
+            "severity": "high",
+            "title": "Excessive Meeting Time",
+            "description": "Team spent 43.6% of time in meetings (healthy target: <20%)",
+            "impact": "Reduced focus time for deep work",
+            "recommendation": "Audit recurring meetings, implement 'No Meeting Wednesdays'",
+            "icon": "\ud83d\udcac",
+            "metric_value": "43.6%",
+            "metric_label": "time in meetings"
+          },
+          {
+            "type": "hidden_delay",
+            "severity": "medium",
+            "title": "Deploy Queue Bottleneck",
+            "description": "Average time from PR-approved to deployed: 9.6 hours",
+            "impact": "Features sit idle waiting for deployment",
+            "recommendation": "Automate deploy pipeline to run immediately after approval",
+            "icon": "\u23f0",
+            "metric_value": "9.6h",
+            "metric_label": "avg deploy delay"
+          },
+          {
+            "type": "knowledge_silo",
+            "severity": "medium",
+            "title": "Knowledge Silo: Auth",
+            "description": "Only 2 people have touched auth code",
+            "impact": "Critical system at risk if these people leave",
+            "recommendation": "Schedule knowledge-sharing sessions for auth",
+            "icon": "\ud83d\udd10",
+            "metric_value": "2",
+            "metric_label": "contributors (bus factor)"
+          },
+          {
+            "type": "blocked_work",
+            "severity": "medium",
+            "title": "Stalled Tickets in Review",
+            "description": "12 tickets blocked waiting for review",
+            "impact": "Sprint velocity impacted",
+            "recommendation": "Set up daily review rotation and max 24-hour review SLA",
+            "icon": "\ud83d\udeab",
+            "metric_value": "12",
+            "metric_label": "blocked tickets"
+          }
+        ],
+        "trends": {
+          "health_score_change": -5,
+          "new_bottlenecks": 3,
+          "resolved_bottlenecks": 1
+        },
+        "summary": "Detected 6 bottlenecks. Health score: 31/100.",
+        "recommendations": [
+          {
+            "id": "rec_1",
+            "title": "Train 2 more developers on code review best practices",
+            "related_bottleneck": "PR Review Concentration",
+            "priority": "high",
+            "status": "pending",
+            "actions": [
+              {
+                "type": "create_jira_ticket",
+                "description": "Create training ticket for code review best practices"
+              },
+              {
+                "type": "slack_message",
+                "description": "Notify team about review load distribution"
+              }
+            ]
+          },
+          {
+            "id": "rec_2",
+            "title": "Investigate and fix flaky tests in integration-test",
+            "related_bottleneck": "Flaky CI/CD Pipeline",
+            "priority": "high",
+            "status": "pending",
+            "actions": [
+              {
+                "type": "create_jira_ticket",
+                "description": "Investigate and fix flaky tests"
+              },
+              {
+                "type": "slack_message",
+                "description": "Alert team about pipeline reliability issues"
+              }
+            ]
+          },
+          {
+            "id": "rec_3",
+            "title": "Audit recurring meetings, implement 'No Meeting Wednesdays'",
+            "related_bottleneck": "Excessive Meeting Time",
+            "priority": "high",
+            "status": "pending",
+            "actions": [
+              {
+                "type": "slack_message",
+                "description": "Propose 'No Meeting Wednesday' policy"
+              }
+            ]
+          },
+          {
+            "id": "rec_4",
+            "title": "Automate deploy pipeline to run immediately after approval",
+            "related_bottleneck": "Deploy Queue Bottleneck",
+            "priority": "medium",
+            "status": "pending",
+            "actions": [
+              {
+                "type": "create_jira_ticket",
+                "description": "Automate deployment pipeline"
+              }
+            ]
+          },
+          {
+            "id": "rec_5",
+            "title": "Schedule knowledge-sharing sessions for auth",
+            "related_bottleneck": "Knowledge Silo: Auth",
+            "priority": "medium",
+            "status": "pending",
+            "actions": [
+              {
+                "type": "schedule_meeting",
+                "description": "Schedule knowledge-sharing session"
+              }
+            ]
+          },
+          {
+            "id": "rec_6",
+            "title": "Set up daily review rotation and max 24-hour review SLA",
+            "related_bottleneck": "Stalled Tickets in Review",
+            "priority": "medium",
+            "status": "pending",
+            "actions": [
+              {
+                "type": "create_jira_ticket",
+                "description": "Define review SLA policy"
+              }
+            ]
+          }
+        ]
+      },
+      "created_at": "2026-01-30T18:16:24.306252"
+    },
+    {
+      "_id": "analysis_20260130_181626",
+      "type": "analysis",
+      "data": {
+        "analysis_id": "analysis_20260130_181626",
+        "timestamp": "2026-01-30T18:16:26.255971",
+        "health_score": 31,
+        "health_status": "critical",
+        "bottlenecks": [
+          {
+            "type": "single_point_of_failure",
+            "severity": "high",
+            "title": "PR Review Concentration",
+            "description": "Sarah Chen approved 75.0% of all PRs last month",
+            "impact": "Team velocity is at risk if this person is unavailable.",
+            "recommendation": "Train 2 more developers on code review best practices",
+            "icon": "\ud83d\udea8",
+            "metric_value": "75.0%",
+            "metric_label": "PRs reviewed by one person"
+          },
+          {
+            "type": "flaky_process",
+            "severity": "high",
+            "title": "Flaky CI/CD Pipeline",
+            "description": "'integration-test' stage fails 43.3% of the time",
+            "impact": "Developers waste time re-running builds",
+            "recommendation": "Investigate and fix flaky tests in integration-test",
+            "icon": "\ud83d\udd04",
+            "metric_value": "43.3%",
+            "metric_label": "pipeline failure rate"
+          },
+          {
+            "type": "meeting_overload",
+            "severity": "high",
+            "title": "Excessive Meeting Time",
+            "description": "Team spent 43.2% of time in meetings (healthy target: <20%)",
+            "impact": "Reduced focus time for deep work",
+            "recommendation": "Audit recurring meetings, implement 'No Meeting Wednesdays'",
+            "icon": "\ud83d\udcac",
+            "metric_value": "43.2%",
+            "metric_label": "time in meetings"
+          },
+          {
+            "type": "hidden_delay",
+            "severity": "medium",
+            "title": "Deploy Queue Bottleneck",
+            "description": "Average time from PR-approved to deployed: 10.2 hours",
+            "impact": "Features sit idle waiting for deployment",
+            "recommendation": "Automate deploy pipeline to run immediately after approval",
+            "icon": "\u23f0",
+            "metric_value": "10.2h",
+            "metric_label": "avg deploy delay"
+          },
+          {
+            "type": "knowledge_silo",
+            "severity": "medium",
+            "title": "Knowledge Silo: Payments",
+            "description": "Only 2 people have touched payments code",
+            "impact": "Critical system at risk if these people leave",
+            "recommendation": "Schedule knowledge-sharing sessions for payments",
+            "icon": "\ud83d\udd10",
+            "metric_value": "2",
+            "metric_label": "contributors (bus factor)"
+          },
+          {
+            "type": "blocked_work",
+            "severity": "medium",
+            "title": "Stalled Tickets in Review",
+            "description": "8 tickets blocked waiting for review",
+            "impact": "Sprint velocity impacted",
+            "recommendation": "Set up daily review rotation and max 24-hour review SLA",
+            "icon": "\ud83d\udeab",
+            "metric_value": "8",
+            "metric_label": "blocked tickets"
+          }
+        ],
+        "trends": {
+          "health_score_change": -5,
+          "new_bottlenecks": 3,
+          "resolved_bottlenecks": 2
+        },
+        "summary": "Detected 6 bottlenecks. Health score: 31/100.",
+        "recommendations": [
+          {
+            "id": "rec_1",
+            "title": "Train 2 more developers on code review best practices",
+            "related_bottleneck": "PR Review Concentration",
+            "priority": "high",
+            "status": "pending",
+            "actions": [
+              {
+                "type": "create_jira_ticket",
+                "description": "Create training ticket for code review best practices"
+              },
+              {
+                "type": "slack_message",
+                "description": "Notify team about review load distribution"
+              }
+            ]
+          },
+          {
+            "id": "rec_2",
+            "title": "Investigate and fix flaky tests in integration-test",
+            "related_bottleneck": "Flaky CI/CD Pipeline",
+            "priority": "high",
+            "status": "pending",
+            "actions": [
+              {
+                "type": "create_jira_ticket",
+                "description": "Investigate and fix flaky tests"
+              },
+              {
+                "type": "slack_message",
+                "description": "Alert team about pipeline reliability issues"
+              }
+            ]
+          },
+          {
+            "id": "rec_3",
+            "title": "Audit recurring meetings, implement 'No Meeting Wednesdays'",
+            "related_bottleneck": "Excessive Meeting Time",
+            "priority": "high",
+            "status": "pending",
+            "actions": [
+              {
+                "type": "slack_message",
+                "description": "Propose 'No Meeting Wednesday' policy"
+              }
+            ]
+          },
+          {
+            "id": "rec_4",
+            "title": "Automate deploy pipeline to run immediately after approval",
+            "related_bottleneck": "Deploy Queue Bottleneck",
+            "priority": "medium",
+            "status": "pending",
+            "actions": [
+              {
+                "type": "create_jira_ticket",
+                "description": "Automate deployment pipeline"
+              }
+            ]
+          },
+          {
+            "id": "rec_5",
+            "title": "Schedule knowledge-sharing sessions for payments",
+            "related_bottleneck": "Knowledge Silo: Payments",
+            "priority": "medium",
+            "status": "pending",
+            "actions": [
+              {
+                "type": "schedule_meeting",
+                "description": "Schedule knowledge-sharing session"
+              }
+            ]
+          },
+          {
+            "id": "rec_6",
+            "title": "Set up daily review rotation and max 24-hour review SLA",
+            "related_bottleneck": "Stalled Tickets in Review",
+            "priority": "medium",
+            "status": "pending",
+            "actions": [
+              {
+                "type": "create_jira_ticket",
+                "description": "Define review SLA policy"
+              }
+            ]
+          }
+        ]
+      },
+      "created_at": "2026-01-30T18:16:26.255996"
+    },
+    {
+      "_id": "analysis_20260130_181627",
+      "type": "analysis",
+      "data": {
+        "analysis_id": "analysis_20260130_181627",
+        "timestamp": "2026-01-30T18:16:27.927912",
+        "health_score": 31,
+        "health_status": "critical",
+        "bottlenecks": [
+          {
+            "type": "single_point_of_failure",
+            "severity": "high",
+            "title": "PR Review Concentration",
+            "description": "Sarah Chen approved 85.0% of all PRs last month",
+            "impact": "Team velocity is at risk if this person is unavailable.",
+            "recommendation": "Train 2 more developers on code review best practices",
+            "icon": "\ud83d\udea8",
+            "metric_value": "85.0%",
+            "metric_label": "PRs reviewed by one person"
+          },
+          {
+            "type": "flaky_process",
+            "severity": "high",
+            "title": "Flaky CI/CD Pipeline",
+            "description": "'integration-test' stage fails 47.5% of the time",
+            "impact": "Developers waste time re-running builds",
+            "recommendation": "Investigate and fix flaky tests in integration-test",
+            "icon": "\ud83d\udd04",
+            "metric_value": "47.5%",
+            "metric_label": "pipeline failure rate"
+          },
+          {
+            "type": "meeting_overload",
+            "severity": "high",
+            "title": "Excessive Meeting Time",
+            "description": "Team spent 42.7% of time in meetings (healthy target: <20%)",
+            "impact": "Reduced focus time for deep work",
+            "recommendation": "Audit recurring meetings, implement 'No Meeting Wednesdays'",
+            "icon": "\ud83d\udcac",
+            "metric_value": "42.7%",
+            "metric_label": "time in meetings"
+          },
+          {
+            "type": "hidden_delay",
+            "severity": "medium",
+            "title": "Deploy Queue Bottleneck",
+            "description": "Average time from PR-approved to deployed: 11.0 hours",
+            "impact": "Features sit idle waiting for deployment",
+            "recommendation": "Automate deploy pipeline to run immediately after approval",
+            "icon": "\u23f0",
+            "metric_value": "11.0h",
+            "metric_label": "avg deploy delay"
+          },
+          {
+            "type": "knowledge_silo",
+            "severity": "medium",
+            "title": "Knowledge Silo: Payments",
+            "description": "Only 2 people have touched payments code",
+            "impact": "Critical system at risk if these people leave",
+            "recommendation": "Schedule knowledge-sharing sessions for payments",
+            "icon": "\ud83d\udd10",
+            "metric_value": "2",
+            "metric_label": "contributors (bus factor)"
+          },
+          {
+            "type": "blocked_work",
+            "severity": "medium",
+            "title": "Stalled Tickets in Review",
+            "description": "15 tickets blocked waiting for review",
+            "impact": "Sprint velocity impacted",
+            "recommendation": "Set up daily review rotation and max 24-hour review SLA",
+            "icon": "\ud83d\udeab",
+            "metric_value": "15",
+            "metric_label": "blocked tickets"
+          }
+        ],
+        "trends": {
+          "health_score_change": 5,
+          "new_bottlenecks": 3,
+          "resolved_bottlenecks": 2
+        },
+        "summary": "Detected 6 bottlenecks. Health score: 31/100.",
+        "recommendations": [
+          {
+            "id": "rec_1",
+            "title": "Train 2 more developers on code review best practices",
+            "related_bottleneck": "PR Review Concentration",
+            "priority": "high",
+            "status": "pending",
+            "actions": [
+              {
+                "type": "create_jira_ticket",
+                "description": "Create training ticket for code review best practices"
+              },
+              {
+                "type": "slack_message",
+                "description": "Notify team about review load distribution"
+              }
+            ]
+          },
+          {
+            "id": "rec_2",
+            "title": "Investigate and fix flaky tests in integration-test",
+            "related_bottleneck": "Flaky CI/CD Pipeline",
+            "priority": "high",
+            "status": "pending",
+            "actions": [
+              {
+                "type": "create_jira_ticket",
+                "description": "Investigate and fix flaky tests"
+              },
+              {
+                "type": "slack_message",
+                "description": "Alert team about pipeline reliability issues"
+              }
+            ]
+          },
+          {
+            "id": "rec_3",
+            "title": "Audit recurring meetings, implement 'No Meeting Wednesdays'",
+            "related_bottleneck": "Excessive Meeting Time",
+            "priority": "high",
+            "status": "pending",
+            "actions": [
+              {
+                "type": "slack_message",
+                "description": "Propose 'No Meeting Wednesday' policy"
+              }
+            ]
+          },
+          {
+            "id": "rec_4",
+            "title": "Automate deploy pipeline to run immediately after approval",
+            "related_bottleneck": "Deploy Queue Bottleneck",
+            "priority": "medium",
+            "status": "pending",
+            "actions": [
+              {
+                "type": "create_jira_ticket",
+                "description": "Automate deployment pipeline"
+              }
+            ]
+          },
+          {
+            "id": "rec_5",
+            "title": "Schedule knowledge-sharing sessions for payments",
+            "related_bottleneck": "Knowledge Silo: Payments",
+            "priority": "medium",
+            "status": "pending",
+            "actions": [
+              {
+                "type": "schedule_meeting",
+                "description": "Schedule knowledge-sharing session"
+              }
+            ]
+          },
+          {
+            "id": "rec_6",
+            "title": "Set up daily review rotation and max 24-hour review SLA",
+            "related_bottleneck": "Stalled Tickets in Review",
+            "priority": "medium",
+            "status": "pending",
+            "actions": [
+              {
+                "type": "create_jira_ticket",
+                "description": "Define review SLA policy"
+              }
+            ]
+          }
+        ]
+      },
+      "created_at": "2026-01-30T18:16:27.927935"
     }
   ],
   "metrics": [],
@@ -1487,6 +2847,916 @@
         ]
       },
       "created_at": "2026-01-30T15:26:06.010651"
+    },
+    {
+      "_id": "rec_1",
+      "type": "recommendation",
+      "data": {
+        "id": "rec_1",
+        "title": "Train 2 more developers on code review best practices",
+        "related_bottleneck": "PR Review Concentration",
+        "priority": "high",
+        "status": "pending",
+        "actions": [
+          {
+            "type": "create_jira_ticket",
+            "description": "Create training ticket for code review best practices"
+          },
+          {
+            "type": "slack_message",
+            "description": "Notify team about review load distribution"
+          }
+        ]
+      },
+      "created_at": "2026-01-30T15:32:42.271732"
+    },
+    {
+      "_id": "rec_2",
+      "type": "recommendation",
+      "data": {
+        "id": "rec_2",
+        "title": "Investigate and fix flaky tests in integration-test",
+        "related_bottleneck": "Flaky CI/CD Pipeline",
+        "priority": "high",
+        "status": "pending",
+        "actions": [
+          {
+            "type": "create_jira_ticket",
+            "description": "Investigate and fix flaky tests"
+          },
+          {
+            "type": "slack_message",
+            "description": "Alert team about pipeline reliability issues"
+          }
+        ]
+      },
+      "created_at": "2026-01-30T15:32:42.273591"
+    },
+    {
+      "_id": "rec_3",
+      "type": "recommendation",
+      "data": {
+        "id": "rec_3",
+        "title": "Audit recurring meetings, implement 'No Meeting Wednesdays'",
+        "related_bottleneck": "Excessive Meeting Time",
+        "priority": "high",
+        "status": "pending",
+        "actions": [
+          {
+            "type": "slack_message",
+            "description": "Propose 'No Meeting Wednesday' policy"
+          }
+        ]
+      },
+      "created_at": "2026-01-30T15:32:42.275583"
+    },
+    {
+      "_id": "rec_4",
+      "type": "recommendation",
+      "data": {
+        "id": "rec_4",
+        "title": "Automate deploy pipeline to run immediately after approval",
+        "related_bottleneck": "Deploy Queue Bottleneck",
+        "priority": "medium",
+        "status": "pending",
+        "actions": [
+          {
+            "type": "create_jira_ticket",
+            "description": "Automate deployment pipeline"
+          }
+        ]
+      },
+      "created_at": "2026-01-30T15:32:42.277434"
+    },
+    {
+      "_id": "rec_5",
+      "type": "recommendation",
+      "data": {
+        "id": "rec_5",
+        "title": "Schedule knowledge-sharing sessions for payments",
+        "related_bottleneck": "Knowledge Silo: Payments",
+        "priority": "medium",
+        "status": "pending",
+        "actions": [
+          {
+            "type": "schedule_meeting",
+            "description": "Schedule knowledge-sharing session"
+          }
+        ]
+      },
+      "created_at": "2026-01-30T15:32:42.279415"
+    },
+    {
+      "_id": "rec_6",
+      "type": "recommendation",
+      "data": {
+        "id": "rec_6",
+        "title": "Set up daily review rotation and max 24-hour review SLA",
+        "related_bottleneck": "Stalled Tickets in Review",
+        "priority": "medium",
+        "status": "pending",
+        "actions": [
+          {
+            "type": "create_jira_ticket",
+            "description": "Define review SLA policy"
+          }
+        ]
+      },
+      "created_at": "2026-01-30T15:32:42.281622"
+    },
+    {
+      "_id": "rec_1",
+      "type": "recommendation",
+      "data": {
+        "id": "rec_1",
+        "title": "Train 2 more developers on code review best practices",
+        "related_bottleneck": "PR Review Concentration",
+        "priority": "high",
+        "status": "pending",
+        "actions": [
+          {
+            "type": "create_jira_ticket",
+            "description": "Create training ticket for code review best practices"
+          },
+          {
+            "type": "slack_message",
+            "description": "Notify team about review load distribution"
+          }
+        ]
+      },
+      "created_at": "2026-01-30T15:33:02.338948"
+    },
+    {
+      "_id": "rec_2",
+      "type": "recommendation",
+      "data": {
+        "id": "rec_2",
+        "title": "Investigate and fix flaky tests in integration-test",
+        "related_bottleneck": "Flaky CI/CD Pipeline",
+        "priority": "high",
+        "status": "pending",
+        "actions": [
+          {
+            "type": "create_jira_ticket",
+            "description": "Investigate and fix flaky tests"
+          },
+          {
+            "type": "slack_message",
+            "description": "Alert team about pipeline reliability issues"
+          }
+        ]
+      },
+      "created_at": "2026-01-30T15:33:02.341700"
+    },
+    {
+      "_id": "rec_3",
+      "type": "recommendation",
+      "data": {
+        "id": "rec_3",
+        "title": "Audit recurring meetings, implement 'No Meeting Wednesdays'",
+        "related_bottleneck": "Excessive Meeting Time",
+        "priority": "high",
+        "status": "pending",
+        "actions": [
+          {
+            "type": "slack_message",
+            "description": "Propose 'No Meeting Wednesday' policy"
+          }
+        ]
+      },
+      "created_at": "2026-01-30T15:33:02.344252"
+    },
+    {
+      "_id": "rec_4",
+      "type": "recommendation",
+      "data": {
+        "id": "rec_4",
+        "title": "Schedule knowledge-sharing sessions for auth",
+        "related_bottleneck": "Knowledge Silo: Auth",
+        "priority": "medium",
+        "status": "pending",
+        "actions": [
+          {
+            "type": "schedule_meeting",
+            "description": "Schedule knowledge-sharing session"
+          }
+        ]
+      },
+      "created_at": "2026-01-30T15:33:02.346634"
+    },
+    {
+      "_id": "rec_5",
+      "type": "recommendation",
+      "data": {
+        "id": "rec_5",
+        "title": "Set up daily review rotation and max 24-hour review SLA",
+        "related_bottleneck": "Stalled Tickets in Review",
+        "priority": "medium",
+        "status": "pending",
+        "actions": [
+          {
+            "type": "create_jira_ticket",
+            "description": "Define review SLA policy"
+          }
+        ]
+      },
+      "created_at": "2026-01-30T15:33:02.349721"
+    },
+    {
+      "_id": "rec_1",
+      "type": "recommendation",
+      "data": {
+        "id": "rec_1",
+        "title": "Train 2 more developers on code review best practices",
+        "related_bottleneck": "PR Review Concentration",
+        "priority": "high",
+        "status": "pending",
+        "actions": [
+          {
+            "type": "create_jira_ticket",
+            "description": "Create training ticket for code review best practices"
+          },
+          {
+            "type": "slack_message",
+            "description": "Notify team about review load distribution"
+          }
+        ]
+      },
+      "created_at": "2026-01-30T17:45:00.345285"
+    },
+    {
+      "_id": "rec_2",
+      "type": "recommendation",
+      "data": {
+        "id": "rec_2",
+        "title": "Investigate and fix flaky tests in integration-test",
+        "related_bottleneck": "Flaky CI/CD Pipeline",
+        "priority": "high",
+        "status": "pending",
+        "actions": [
+          {
+            "type": "create_jira_ticket",
+            "description": "Investigate and fix flaky tests"
+          },
+          {
+            "type": "slack_message",
+            "description": "Alert team about pipeline reliability issues"
+          }
+        ]
+      },
+      "created_at": "2026-01-30T17:45:00.347680"
+    },
+    {
+      "_id": "rec_3",
+      "type": "recommendation",
+      "data": {
+        "id": "rec_3",
+        "title": "Audit recurring meetings, implement 'No Meeting Wednesdays'",
+        "related_bottleneck": "Excessive Meeting Time",
+        "priority": "high",
+        "status": "pending",
+        "actions": [
+          {
+            "type": "slack_message",
+            "description": "Propose 'No Meeting Wednesday' policy"
+          }
+        ]
+      },
+      "created_at": "2026-01-30T17:45:00.350529"
+    },
+    {
+      "_id": "rec_4",
+      "type": "recommendation",
+      "data": {
+        "id": "rec_4",
+        "title": "Automate deploy pipeline to run immediately after approval",
+        "related_bottleneck": "Deploy Queue Bottleneck",
+        "priority": "medium",
+        "status": "pending",
+        "actions": [
+          {
+            "type": "create_jira_ticket",
+            "description": "Automate deployment pipeline"
+          }
+        ]
+      },
+      "created_at": "2026-01-30T17:45:00.353467"
+    },
+    {
+      "_id": "rec_5",
+      "type": "recommendation",
+      "data": {
+        "id": "rec_5",
+        "title": "Schedule knowledge-sharing sessions for payments",
+        "related_bottleneck": "Knowledge Silo: Payments",
+        "priority": "medium",
+        "status": "pending",
+        "actions": [
+          {
+            "type": "schedule_meeting",
+            "description": "Schedule knowledge-sharing session"
+          }
+        ]
+      },
+      "created_at": "2026-01-30T17:45:00.357062"
+    },
+    {
+      "_id": "rec_6",
+      "type": "recommendation",
+      "data": {
+        "id": "rec_6",
+        "title": "Set up daily review rotation and max 24-hour review SLA",
+        "related_bottleneck": "Stalled Tickets in Review",
+        "priority": "medium",
+        "status": "pending",
+        "actions": [
+          {
+            "type": "create_jira_ticket",
+            "description": "Define review SLA policy"
+          }
+        ]
+      },
+      "created_at": "2026-01-30T17:45:00.359625"
+    },
+    {
+      "_id": "rec_1",
+      "type": "recommendation",
+      "data": {
+        "id": "rec_1",
+        "title": "Train 2 more developers on code review best practices",
+        "related_bottleneck": "PR Review Concentration",
+        "priority": "high",
+        "status": "pending",
+        "actions": [
+          {
+            "type": "create_jira_ticket",
+            "description": "Create training ticket for code review best practices"
+          },
+          {
+            "type": "slack_message",
+            "description": "Notify team about review load distribution"
+          }
+        ]
+      },
+      "created_at": "2026-01-30T18:14:27.354750"
+    },
+    {
+      "_id": "rec_2",
+      "type": "recommendation",
+      "data": {
+        "id": "rec_2",
+        "title": "Investigate and fix flaky tests in integration-test",
+        "related_bottleneck": "Flaky CI/CD Pipeline",
+        "priority": "high",
+        "status": "pending",
+        "actions": [
+          {
+            "type": "create_jira_ticket",
+            "description": "Investigate and fix flaky tests"
+          },
+          {
+            "type": "slack_message",
+            "description": "Alert team about pipeline reliability issues"
+          }
+        ]
+      },
+      "created_at": "2026-01-30T18:14:27.357569"
+    },
+    {
+      "_id": "rec_3",
+      "type": "recommendation",
+      "data": {
+        "id": "rec_3",
+        "title": "Audit recurring meetings, implement 'No Meeting Wednesdays'",
+        "related_bottleneck": "Excessive Meeting Time",
+        "priority": "high",
+        "status": "pending",
+        "actions": [
+          {
+            "type": "slack_message",
+            "description": "Propose 'No Meeting Wednesday' policy"
+          }
+        ]
+      },
+      "created_at": "2026-01-30T18:14:27.359949"
+    },
+    {
+      "_id": "rec_4",
+      "type": "recommendation",
+      "data": {
+        "id": "rec_4",
+        "title": "Automate deploy pipeline to run immediately after approval",
+        "related_bottleneck": "Deploy Queue Bottleneck",
+        "priority": "medium",
+        "status": "pending",
+        "actions": [
+          {
+            "type": "create_jira_ticket",
+            "description": "Automate deployment pipeline"
+          }
+        ]
+      },
+      "created_at": "2026-01-30T18:14:27.362438"
+    },
+    {
+      "_id": "rec_5",
+      "type": "recommendation",
+      "data": {
+        "id": "rec_5",
+        "title": "Schedule knowledge-sharing sessions for auth",
+        "related_bottleneck": "Knowledge Silo: Auth",
+        "priority": "medium",
+        "status": "pending",
+        "actions": [
+          {
+            "type": "schedule_meeting",
+            "description": "Schedule knowledge-sharing session"
+          }
+        ]
+      },
+      "created_at": "2026-01-30T18:14:27.365628"
+    },
+    {
+      "_id": "rec_6",
+      "type": "recommendation",
+      "data": {
+        "id": "rec_6",
+        "title": "Set up daily review rotation and max 24-hour review SLA",
+        "related_bottleneck": "Stalled Tickets in Review",
+        "priority": "medium",
+        "status": "pending",
+        "actions": [
+          {
+            "type": "create_jira_ticket",
+            "description": "Define review SLA policy"
+          }
+        ]
+      },
+      "created_at": "2026-01-30T18:14:27.368501"
+    },
+    {
+      "_id": "rec_1",
+      "type": "recommendation",
+      "data": {
+        "id": "rec_1",
+        "title": "Train 2 more developers on code review best practices",
+        "related_bottleneck": "PR Review Concentration",
+        "priority": "high",
+        "status": "pending",
+        "actions": [
+          {
+            "type": "create_jira_ticket",
+            "description": "Create training ticket for code review best practices"
+          },
+          {
+            "type": "slack_message",
+            "description": "Notify team about review load distribution"
+          }
+        ]
+      },
+      "created_at": "2026-01-30T18:16:21.357796"
+    },
+    {
+      "_id": "rec_2",
+      "type": "recommendation",
+      "data": {
+        "id": "rec_2",
+        "title": "Investigate and fix flaky tests in integration-test",
+        "related_bottleneck": "Flaky CI/CD Pipeline",
+        "priority": "high",
+        "status": "pending",
+        "actions": [
+          {
+            "type": "create_jira_ticket",
+            "description": "Investigate and fix flaky tests"
+          },
+          {
+            "type": "slack_message",
+            "description": "Alert team about pipeline reliability issues"
+          }
+        ]
+      },
+      "created_at": "2026-01-30T18:16:21.360166"
+    },
+    {
+      "_id": "rec_3",
+      "type": "recommendation",
+      "data": {
+        "id": "rec_3",
+        "title": "Audit recurring meetings, implement 'No Meeting Wednesdays'",
+        "related_bottleneck": "Excessive Meeting Time",
+        "priority": "high",
+        "status": "pending",
+        "actions": [
+          {
+            "type": "slack_message",
+            "description": "Propose 'No Meeting Wednesday' policy"
+          }
+        ]
+      },
+      "created_at": "2026-01-30T18:16:21.363786"
+    },
+    {
+      "_id": "rec_4",
+      "type": "recommendation",
+      "data": {
+        "id": "rec_4",
+        "title": "Automate deploy pipeline to run immediately after approval",
+        "related_bottleneck": "Deploy Queue Bottleneck",
+        "priority": "medium",
+        "status": "pending",
+        "actions": [
+          {
+            "type": "create_jira_ticket",
+            "description": "Automate deployment pipeline"
+          }
+        ]
+      },
+      "created_at": "2026-01-30T18:16:21.367186"
+    },
+    {
+      "_id": "rec_5",
+      "type": "recommendation",
+      "data": {
+        "id": "rec_5",
+        "title": "Schedule knowledge-sharing sessions for payments",
+        "related_bottleneck": "Knowledge Silo: Payments",
+        "priority": "medium",
+        "status": "pending",
+        "actions": [
+          {
+            "type": "schedule_meeting",
+            "description": "Schedule knowledge-sharing session"
+          }
+        ]
+      },
+      "created_at": "2026-01-30T18:16:21.371052"
+    },
+    {
+      "_id": "rec_6",
+      "type": "recommendation",
+      "data": {
+        "id": "rec_6",
+        "title": "Set up daily review rotation and max 24-hour review SLA",
+        "related_bottleneck": "Stalled Tickets in Review",
+        "priority": "medium",
+        "status": "pending",
+        "actions": [
+          {
+            "type": "create_jira_ticket",
+            "description": "Define review SLA policy"
+          }
+        ]
+      },
+      "created_at": "2026-01-30T18:16:21.373322"
+    },
+    {
+      "_id": "rec_1",
+      "type": "recommendation",
+      "data": {
+        "id": "rec_1",
+        "title": "Train 2 more developers on code review best practices",
+        "related_bottleneck": "PR Review Concentration",
+        "priority": "high",
+        "status": "pending",
+        "actions": [
+          {
+            "type": "create_jira_ticket",
+            "description": "Create training ticket for code review best practices"
+          },
+          {
+            "type": "slack_message",
+            "description": "Notify team about review load distribution"
+          }
+        ]
+      },
+      "created_at": "2026-01-30T18:16:24.311746"
+    },
+    {
+      "_id": "rec_2",
+      "type": "recommendation",
+      "data": {
+        "id": "rec_2",
+        "title": "Investigate and fix flaky tests in integration-test",
+        "related_bottleneck": "Flaky CI/CD Pipeline",
+        "priority": "high",
+        "status": "pending",
+        "actions": [
+          {
+            "type": "create_jira_ticket",
+            "description": "Investigate and fix flaky tests"
+          },
+          {
+            "type": "slack_message",
+            "description": "Alert team about pipeline reliability issues"
+          }
+        ]
+      },
+      "created_at": "2026-01-30T18:16:24.315102"
+    },
+    {
+      "_id": "rec_3",
+      "type": "recommendation",
+      "data": {
+        "id": "rec_3",
+        "title": "Audit recurring meetings, implement 'No Meeting Wednesdays'",
+        "related_bottleneck": "Excessive Meeting Time",
+        "priority": "high",
+        "status": "pending",
+        "actions": [
+          {
+            "type": "slack_message",
+            "description": "Propose 'No Meeting Wednesday' policy"
+          }
+        ]
+      },
+      "created_at": "2026-01-30T18:16:24.318785"
+    },
+    {
+      "_id": "rec_4",
+      "type": "recommendation",
+      "data": {
+        "id": "rec_4",
+        "title": "Automate deploy pipeline to run immediately after approval",
+        "related_bottleneck": "Deploy Queue Bottleneck",
+        "priority": "medium",
+        "status": "pending",
+        "actions": [
+          {
+            "type": "create_jira_ticket",
+            "description": "Automate deployment pipeline"
+          }
+        ]
+      },
+      "created_at": "2026-01-30T18:16:24.325133"
+    },
+    {
+      "_id": "rec_5",
+      "type": "recommendation",
+      "data": {
+        "id": "rec_5",
+        "title": "Schedule knowledge-sharing sessions for auth",
+        "related_bottleneck": "Knowledge Silo: Auth",
+        "priority": "medium",
+        "status": "pending",
+        "actions": [
+          {
+            "type": "schedule_meeting",
+            "description": "Schedule knowledge-sharing session"
+          }
+        ]
+      },
+      "created_at": "2026-01-30T18:16:24.329749"
+    },
+    {
+      "_id": "rec_6",
+      "type": "recommendation",
+      "data": {
+        "id": "rec_6",
+        "title": "Set up daily review rotation and max 24-hour review SLA",
+        "related_bottleneck": "Stalled Tickets in Review",
+        "priority": "medium",
+        "status": "pending",
+        "actions": [
+          {
+            "type": "create_jira_ticket",
+            "description": "Define review SLA policy"
+          }
+        ]
+      },
+      "created_at": "2026-01-30T18:16:24.333265"
+    },
+    {
+      "_id": "rec_1",
+      "type": "recommendation",
+      "data": {
+        "id": "rec_1",
+        "title": "Train 2 more developers on code review best practices",
+        "related_bottleneck": "PR Review Concentration",
+        "priority": "high",
+        "status": "pending",
+        "actions": [
+          {
+            "type": "create_jira_ticket",
+            "description": "Create training ticket for code review best practices"
+          },
+          {
+            "type": "slack_message",
+            "description": "Notify team about review load distribution"
+          }
+        ]
+      },
+      "created_at": "2026-01-30T18:16:26.261643"
+    },
+    {
+      "_id": "rec_2",
+      "type": "recommendation",
+      "data": {
+        "id": "rec_2",
+        "title": "Investigate and fix flaky tests in integration-test",
+        "related_bottleneck": "Flaky CI/CD Pipeline",
+        "priority": "high",
+        "status": "pending",
+        "actions": [
+          {
+            "type": "create_jira_ticket",
+            "description": "Investigate and fix flaky tests"
+          },
+          {
+            "type": "slack_message",
+            "description": "Alert team about pipeline reliability issues"
+          }
+        ]
+      },
+      "created_at": "2026-01-30T18:16:26.266435"
+    },
+    {
+      "_id": "rec_3",
+      "type": "recommendation",
+      "data": {
+        "id": "rec_3",
+        "title": "Audit recurring meetings, implement 'No Meeting Wednesdays'",
+        "related_bottleneck": "Excessive Meeting Time",
+        "priority": "high",
+        "status": "pending",
+        "actions": [
+          {
+            "type": "slack_message",
+            "description": "Propose 'No Meeting Wednesday' policy"
+          }
+        ]
+      },
+      "created_at": "2026-01-30T18:16:26.270924"
+    },
+    {
+      "_id": "rec_4",
+      "type": "recommendation",
+      "data": {
+        "id": "rec_4",
+        "title": "Automate deploy pipeline to run immediately after approval",
+        "related_bottleneck": "Deploy Queue Bottleneck",
+        "priority": "medium",
+        "status": "pending",
+        "actions": [
+          {
+            "type": "create_jira_ticket",
+            "description": "Automate deployment pipeline"
+          }
+        ]
+      },
+      "created_at": "2026-01-30T18:16:26.278739"
+    },
+    {
+      "_id": "rec_5",
+      "type": "recommendation",
+      "data": {
+        "id": "rec_5",
+        "title": "Schedule knowledge-sharing sessions for payments",
+        "related_bottleneck": "Knowledge Silo: Payments",
+        "priority": "medium",
+        "status": "pending",
+        "actions": [
+          {
+            "type": "schedule_meeting",
+            "description": "Schedule knowledge-sharing session"
+          }
+        ]
+      },
+      "created_at": "2026-01-30T18:16:26.283428"
+    },
+    {
+      "_id": "rec_6",
+      "type": "recommendation",
+      "data": {
+        "id": "rec_6",
+        "title": "Set up daily review rotation and max 24-hour review SLA",
+        "related_bottleneck": "Stalled Tickets in Review",
+        "priority": "medium",
+        "status": "pending",
+        "actions": [
+          {
+            "type": "create_jira_ticket",
+            "description": "Define review SLA policy"
+          }
+        ]
+      },
+      "created_at": "2026-01-30T18:16:26.289319"
+    },
+    {
+      "_id": "rec_1",
+      "type": "recommendation",
+      "data": {
+        "id": "rec_1",
+        "title": "Train 2 more developers on code review best practices",
+        "related_bottleneck": "PR Review Concentration",
+        "priority": "high",
+        "status": "pending",
+        "actions": [
+          {
+            "type": "create_jira_ticket",
+            "description": "Create training ticket for code review best practices"
+          },
+          {
+            "type": "slack_message",
+            "description": "Notify team about review load distribution"
+          }
+        ]
+      },
+      "created_at": "2026-01-30T18:16:27.932704"
+    },
+    {
+      "_id": "rec_2",
+      "type": "recommendation",
+      "data": {
+        "id": "rec_2",
+        "title": "Investigate and fix flaky tests in integration-test",
+        "related_bottleneck": "Flaky CI/CD Pipeline",
+        "priority": "high",
+        "status": "pending",
+        "actions": [
+          {
+            "type": "create_jira_ticket",
+            "description": "Investigate and fix flaky tests"
+          },
+          {
+            "type": "slack_message",
+            "description": "Alert team about pipeline reliability issues"
+          }
+        ]
+      },
+      "created_at": "2026-01-30T18:16:27.936810"
+    },
+    {
+      "_id": "rec_3",
+      "type": "recommendation",
+      "data": {
+        "id": "rec_3",
+        "title": "Audit recurring meetings, implement 'No Meeting Wednesdays'",
+        "related_bottleneck": "Excessive Meeting Time",
+        "priority": "high",
+        "status": "pending",
+        "actions": [
+          {
+            "type": "slack_message",
+            "description": "Propose 'No Meeting Wednesday' policy"
+          }
+        ]
+      },
+      "created_at": "2026-01-30T18:16:27.942502"
+    },
+    {
+      "_id": "rec_4",
+      "type": "recommendation",
+      "data": {
+        "id": "rec_4",
+        "title": "Automate deploy pipeline to run immediately after approval",
+        "related_bottleneck": "Deploy Queue Bottleneck",
+        "priority": "medium",
+        "status": "pending",
+        "actions": [
+          {
+            "type": "create_jira_ticket",
+            "description": "Automate deployment pipeline"
+          }
+        ]
+      },
+      "created_at": "2026-01-30T18:16:27.948781"
+    },
+    {
+      "_id": "rec_5",
+      "type": "recommendation",
+      "data": {
+        "id": "rec_5",
+        "title": "Schedule knowledge-sharing sessions for payments",
+        "related_bottleneck": "Knowledge Silo: Payments",
+        "priority": "medium",
+        "status": "pending",
+        "actions": [
+          {
+            "type": "schedule_meeting",
+            "description": "Schedule knowledge-sharing session"
+          }
+        ]
+      },
+      "created_at": "2026-01-30T18:16:27.953455"
+    },
+    {
+      "_id": "rec_6",
+      "type": "recommendation",
+      "data": {
+        "id": "rec_6",
+        "title": "Set up daily review rotation and max 24-hour review SLA",
+        "related_bottleneck": "Stalled Tickets in Review",
+        "priority": "medium",
+        "status": "pending",
+        "actions": [
+          {
+            "type": "create_jira_ticket",
+            "description": "Define review SLA policy"
+          }
+        ]
+      },
+      "created_at": "2026-01-30T18:16:27.958311"
     }
   ]
 }
