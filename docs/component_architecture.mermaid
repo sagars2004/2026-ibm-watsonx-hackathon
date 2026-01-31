@@ -1,0 +1,41 @@
+classDiagram
+    direction LR
+
+    class User {
+        +Manager
+    }
+
+    class Orchestrate {
+        +Agent Chat
+        +Skill Set
+    }
+
+    class Frontend {
+        +React App
+        +Dashboard UI
+        +Auto-Poller
+    }
+
+    class Backend {
+        +Flask API (Python)
+        +Data Generator
+        +Watson Client
+    }
+
+    class CloudantDB {
+        +Jira Logs
+        +GitHub Logs
+        +Analysis History
+    }
+
+    class WatsonxAI {
+        +IBM Granite Model
+        +Generative Analysis
+    }
+
+    User --> Orchestrate : "Chat / Commands"
+    User --> Frontend : "Views Dashboard"
+    Orchestrate --> Backend : "Execute Skill (API)"
+    Frontend --> Backend : "Fetch Metrics (JSON)"
+    Backend --> CloudantDB : "Read/Write State"
+    Backend --> WatsonxAI : "Prompt for Analysis"

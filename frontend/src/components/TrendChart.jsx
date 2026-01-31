@@ -6,7 +6,7 @@ function TrendChart({ data }) {
     // Generate simulated trend data based on bottleneck count
     const trendData = useMemo(() => {
         const points = [];
-        const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+        const days = ['Mon', 'Tues', 'Wed', 'Thur', 'Fri', 'Sat', 'Sun'];
         const baseScore = data?.length ? Math.max(30, 100 - data.length * 15) : 75;
 
         for (let i = 0; i < 7; i++) {
@@ -44,9 +44,9 @@ function TrendChart({ data }) {
                     <span>Health Score</span>
                 </div>
             </div>
-            <div className="chart-container">
-                <ResponsiveContainer width="100%" height={200}>
-                    <AreaChart data={trendData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+            <div className="chart-container" style={{ height: "100%", flex: 1 }}>
+                <ResponsiveContainer width="100%" height="100%">
+                    <AreaChart data={trendData} margin={{ top: 5, right: 5, left: 0, bottom: 0 }}>
                         <defs>
                             <linearGradient id="scoreGradient" x1="0" y1="0" x2="0" y2="1">
                                 <stop offset="5%" stopColor="var(--accent-blue)" stopOpacity={0.15} />
@@ -63,8 +63,8 @@ function TrendChart({ data }) {
                             domain={[0, 100]}
                             axisLine={false}
                             tickLine={false}
-                            tick={{ fill: 'var(--text-muted)', fontSize: 11 }}
-                            width={30}
+                            tick={{ fill: 'var(--text-muted)', fontSize: 11, dx: -5 }}
+                            width={40}
                         />
                         <Tooltip content={<CustomTooltip />} />
                         <Area

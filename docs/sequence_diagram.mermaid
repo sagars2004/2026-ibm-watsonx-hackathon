@@ -1,0 +1,31 @@
+sequenceDiagram
+    participant User
+    participant Agent as watsonx Orchestrate
+    participant API as Python Backend
+    participant DB as IBM Cloudant
+    participant AI as watsonx.ai (Granite)
+    participant UI as React Dashboard
+
+    Note over UI: Dashboard shows Red Score (Polls API)
+    
+    User->>Agent: "Resolve blockers"
+    Agent->>API: POST /api/actions {type: "resolve_blockers"}
+    
+    activate API
+    API->>DB: Update Jira Data (blocked_count = 0)
+    API->>AI: Analyze(New Data)
+    activate AI
+    AI-->>API: Returns {bottlenecks: []}
+    deactivate AI
+    
+    API-->>Agent: 200 OK "Resolved 12 tickets"
+    deactivate API
+    
+    Agent-->>User: "Success! Team velocity increasing."
+    
+    loop Auto-Polling
+        UI->>API: GET /api/analyze/quick
+        API-->>UI: Returns Green Score
+    end
+    
+    Note over UI: Dashboard turns Green 🟢

@@ -614,14 +614,40 @@ def analyze_bottlenecks():
     return jsonify(analysis)
 
 
+# Caching for stability (prevents LLM fluctuation on same data)
+_analysis_cache = {
+    "hash": None,
+    "result": None
+}
+
 @app.route("/api/analyze/quick", methods=["GET"])
 def quick_analysis():
+    global _analysis_cache
+    
     data = get_mock_data(30)
+    
+    # Create a hash of the critical data points to detect changes
+    # We focus on Jira Blocked Count as it's the trigger for the demo
+    jira_summary = data.get("jira", {}).get("summary", {})
+    current_hash = f"{jira_summary.get('blocked_count')}-{jira_summary.get('total_tickets')}"
+    
+    # If data hasn't changed, return cached analysis (Stable UI)
+    if _analysis_cache["hash"] == current_hash and _analysis_cache["result"]:
+        return jsonify(_analysis_cache["result"])
+
+    # Data changed, re-run analysis
+    # Log muted for demo cleanliness
     watsonx = get_watsonx_client()
     analysis = watsonx.analyze_bottlenecks(data)
-    # Ensure quick analysis includes recommendations to prevent UI flickering
+    
+    # Ensure quick analysis includes recommendations
     recommendations = watsonx.generate_recommendations(analysis)
     analysis["recommendations"] = recommendations
+    
+    # Update cache
+    _analysis_cache["hash"] = current_hash
+    _analysis_cache["result"] = analysis
+    
     return jsonify(analysis)
 
 
@@ -794,17 +820,33 @@ def execute_action():
     elif action_type == "resolve_blockers":
         # Logic: Clear blocked tickets
         jira = data["jira"]["summary"]
-        blocked = jira.get("blocked_count", 0)
+        current_blocked = jira.get("blocked_count", 0)
         
-        print(f"DEBUG: Found {blocked} blocked tickets") # DEBUG
+        # Determine how many to resolve
+        count_to_resolve = body.get("count", current_blocked) 
+        if isinstance(count_to_resolve, str) and count_to_resolve.isdigit():
+             count_to_resolve = int(count_to_resolve)
         
-        if blocked > 0:
-            jira["blocked_count"] = 0
-            jira["in_progress"] = jira.get("in_progress", 0) + blocked
-            # Improve velocity
-            jira["velocity"] += int(blocked * 3)
+        # Ensure we don't resolve more than we have
+        resolved = min(current_blocked, count_to_resolve)
+        
+        print(f"DEBUG: Found {current_blocked} blocked tickets. Resolving {resolved}.") # DEBUG
+        
+        if resolved > 0:
+            jira["blocked_count"] -= resolved
+            jira["in_progress"] = jira.get("in_progress", 0) + resolved
+            # Improve velocity (partial boost)
+            jira["velocity"] += int(resolved * 3)
             
-            response_msg = f"✅ **Blockers Resolved:** Unblocked {blocked} tickets. Team velocity projected to increase."
+            # Boost Team Mood / Sentiment
+            slack_summary = data.get("slack", {}).get("summary", {})
+            current_sentiment = slack_summary.get("sentiment_score", 50)
+            slack_summary["sentiment_score"] = min(98, current_sentiment + 15)
+            
+            response_msg = f"✅ **Blockers Partial Resolve:** Unblocked {resolved} tickets. Remaining: {jira['blocked_count']}."
+            if jira["blocked_count"] == 0:
+                 response_msg = f"✅ **All Blockers Resolved:** Unblocked {resolved} tickets. Team velocity projected to increase and morale is up! 🚀"
+            
             changes_made = True
         else:
             response_msg = "ℹ️ No blocked tickets found to resolve."
@@ -842,7 +884,21 @@ def execute_action():
         "data_updated": changes_made
     })
 
+
+@app.route("/api/health", methods=["GET"])
+def health():
+    return jsonify({
+        "status": "up", 
+        "cloudant": "connected" if db.enabled else "mock",
+        "timestamp": datetime.now().isoformat()
+    })
+
 if __name__ == "__main__":
+    # 🔇 Mute the noisy polling logs
+    import logging
+    log = logging.getLogger('werkzeug')
+    log.setLevel(logging.WARNING)
+
     # 🔄 Auto-Reset DB for Demo Consistency
     try:
         if db.enabled:
@@ -861,7 +917,7 @@ if __name__ == "__main__":
     print("=" * 60)
     print(f"📍 Running on: http://localhost:{port}")
     print(f"🔧 Debug mode: {debug}")
-    print(f"🤖 Mock AI mode: {os.getenv('USE_MOCK_AI', 'true')}")
+    # print(f"🤖 Mock AI mode: {os.getenv('USE_MOCK_AI', 'true')}") # Hidden for demo
     print("=" * 60 + "\n")
     
     app.run(host="0.0.0.0", port=port, debug=debug)

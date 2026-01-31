@@ -170,7 +170,7 @@ def generate_jira_data(days: int = 30) -> Dict[str, Any]:
         created_at = now - timedelta(days=random.randint(1, days))
         assignee = random.choice(TEAM_MEMBERS)
         
-        if random.random() < 0.25:
+        if random.random() < 0.40: # Increased to ensure ~20+ blocked tickets for demo drama (Score < 50)
             status = "In Review"
             days_in_status = random.randint(3, 10)
         else:
@@ -254,11 +254,11 @@ def generate_slack_data(days: int = 30) -> Dict[str, Any]:
         }
     
     # Calculate Sentiment (Burnout detection)
-    # Base: 85
+    # Base: 60 (Lowered for demo drama - allows "Improvement" to be visible)
     # Penalty: 0.5 per % of meeting time over 20%
     # Penalty: 1.0 per % of after hours activity
     
-    base_sentiment = 85.0
+    base_sentiment = 60.0
     meeting_penalty = max(0, (meeting_percentage - 20) * 0.5)
     after_hours_penalty = round(len([a for a in daily_activity if a["after_hours_messages"] > 0]) / len(daily_activity) * 100, 1) * 0.5
     

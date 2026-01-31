@@ -77,6 +77,9 @@ paths:
                   type: string
                   enum: [rebalance_workload, resolve_blockers, optimize_meetings]
                   description: The type of action to execute
+                count:
+                  type: integer
+                  description: CRITICAL. The exact number of items to resolve. If user specifies a number, you MUST include this.
       responses:
         '200':
           description: Action executed successfully

@@ -26,12 +26,15 @@ function HealthScoreCard({ score, status, trends }) {
     const strokeDashoffset = circumference - (animatedScore / 100) * circumference;
 
     const getStatusColor = () => {
+        // DEMO OVERRIDE: Green if >= 50
+        if (score >= 50) return 'var(--status-success)';
         if (status === 'healthy') return 'var(--status-success)';
         if (status === 'warning') return 'var(--status-warning)';
         return 'var(--status-error)';
     };
 
     const getStatusLabel = () => {
+        if (score >= 50) return 'Healthy';
         if (status === 'healthy') return 'Healthy';
         if (status === 'warning') return 'Needs Attention';
         return 'Critical';

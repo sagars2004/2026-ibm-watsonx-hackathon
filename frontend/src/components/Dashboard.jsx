@@ -24,6 +24,12 @@ function Dashboard({ analysis, metrics }) {
 
     return (
         <div className="dashboard">
+            <div style={{ marginBottom: '1rem' }}>
+                <h2 style={{ fontSize: '1.5rem', fontWeight: '500', color: 'var(--text-primary)' }}>
+                    Hello, Sagar... Good luck in the 2026 IBM AI Demystified Hackathon!
+                </h2>
+            </div>
+
             <div className="dashboard-row dashboard-top">
                 <HealthScoreCard
                     score={analysis?.health_score || 0}
@@ -48,20 +54,27 @@ function Dashboard({ analysis, metrics }) {
                             <span className="stat-label">Recommendations</span>
                         </div>
                     </div>
-                    <div className="severity-legend">
-                        <div className="legend-item">
-                            <span className="status-dot error"></span>
-                            <span>High: {bottlenecks.filter(b => b.severity === 'high').length}</span>
+
+                    {/* Predictive Modeling View */}
+                    {analysis?.predictions && (
+                        <div style={{ marginTop: 'auto', borderTop: '1px solid var(--border-subtle)', paddingTop: '1rem' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: '600', fontSize: '0.9rem' }}>
+
+                                    <span>Project Forecast</span>
+                                </div>
+                                <span className={`badge ${analysis.predictions.risk_level === 'low' ? 'success' : 'warning'}`} style={{ fontSize: '0.75rem' }}>
+                                    {analysis.predictions.risk_level === 'low' ? 'On Track' : 'At Risk'}
+                                </span>
+                            </div>
+                            <div style={{ fontSize: '1.25rem', fontWeight: '700', color: 'var(--text-primary)' }}>
+                                {analysis.predictions.days_to_completion} Days
+                            </div>
+                            <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                                to completion at current velocity ({analysis.predictions.projected_velocity} pts/sprint)
+                            </div>
                         </div>
-                        <div className="legend-item">
-                            <span className="status-dot warning"></span>
-                            <span>Medium: {bottlenecks.filter(b => b.severity === 'medium').length}</span>
-                        </div>
-                        <div className="legend-item">
-                            <span className="status-dot info"></span>
-                            <span>Low: {bottlenecks.filter(b => b.severity === 'low').length}</span>
-                        </div>
-                    </div>
+                    )}
                 </div>
                 <TrendChart data={bottlenecks} />
             </div>
@@ -74,7 +87,7 @@ function Dashboard({ analysis, metrics }) {
                 <BottleneckList bottlenecks={bottlenecks} />
                 <RecommendationPanel recommendations={recommendations} />
             </div>
-        </div>
+        </div >
     );
 }
 
