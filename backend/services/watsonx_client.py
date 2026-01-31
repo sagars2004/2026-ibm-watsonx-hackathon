@@ -50,9 +50,9 @@ class WatsonxClient:
     def _real_analysis(self, data: Dict[str, Any]) -> Dict[str, Any]:
         """Perform real analysis using watsonx.ai."""
         try:
-            from ibm_watsonx_ai.foundation_models import Model
+            from ibm_watsonx_ai.foundation_models import ModelInference
             
-            model = Model(
+            model = ModelInference(
                 model_id="ibm/granite-4-h-small",
                 credentials={
                     "url": self.url,

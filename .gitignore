@@ -1,0 +1,21 @@
+# Virtual Environment
+venv/
+backend/venv/
+.venv/
+env/
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.DS_Store
+
+# Node / Frontend
+node_modules/
+dist/
+build/
+.next/
+
+# Environment Variables
+.env
+.env.local
