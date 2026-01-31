@@ -253,6 +253,17 @@ def generate_slack_data(days: int = 30) -> Dict[str, Any]:
             "after_hours_messages": sum(a["after_hours_messages"] for a in member_activity),
         }
     
+    # Calculate Sentiment (Burnout detection)
+    # Base: 85
+    # Penalty: 0.5 per % of meeting time over 20%
+    # Penalty: 1.0 per % of after hours activity
+    
+    base_sentiment = 85.0
+    meeting_penalty = max(0, (meeting_percentage - 20) * 0.5)
+    after_hours_penalty = round(len([a for a in daily_activity if a["after_hours_messages"] > 0]) / len(daily_activity) * 100, 1) * 0.5
+    
+    sentiment_score = max(10, round(base_sentiment - meeting_penalty - after_hours_penalty, 1))
+    
     return {
         "daily_activity": daily_activity[:30],
         "member_stats": member_stats,
@@ -261,6 +272,7 @@ def generate_slack_data(days: int = 30) -> Dict[str, Any]:
             "total_meeting_hours_week": round(total_meeting_hours / (days / 7), 1),
             "avg_messages_per_day": round(sum(a["messages_sent"] for a in daily_activity) / days, 1),
             "after_hours_activity_rate": round(len([a for a in daily_activity if a["after_hours_messages"] > 0]) / len(daily_activity) * 100, 1),
+            "sentiment_score": sentiment_score, # New Field
         }
     }
 

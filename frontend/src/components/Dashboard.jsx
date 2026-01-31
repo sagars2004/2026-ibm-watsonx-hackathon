@@ -66,13 +66,13 @@ function Dashboard({ analysis, metrics }) {
                 <TrendChart data={bottlenecks} />
             </div>
 
+            <div className="dashboard-row dashboard-bottom">
+                <MetricsGrid metrics={metrics} />
+            </div>
+
             <div className="dashboard-row dashboard-middle">
                 <BottleneckList bottlenecks={bottlenecks} />
                 <RecommendationPanel recommendations={recommendations} />
-            </div>
-
-            <div className="dashboard-row dashboard-bottom">
-                <MetricsGrid metrics={metrics} />
             </div>
         </div>
     );

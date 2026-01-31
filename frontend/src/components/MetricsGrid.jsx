@@ -64,9 +64,14 @@ function MetricsGrid({ metrics }) {
             title: 'Communication',
             icon: 'slack',
             stats: metrics.slack ? [
-                { label: 'Avg Response', value: `${metrics.slack.avg_response_time_mins}m` },
-                { label: 'Meeting Time', value: `${metrics.slack.meeting_time_percentage}%` },
-                { label: 'Active Threads', value: metrics.slack.active_threads },
+                { label: 'Daily Msgs', value: Math.round(metrics.slack.avg_messages_per_day) },
+                { label: 'Meeting Load', value: `${metrics.slack.meeting_percentage}%` },
+                {
+                    label: 'Team Mood',
+                    value: `${metrics.slack.sentiment_score || '--'}/100`,
+                    isScore: true,
+                    score: metrics.slack.sentiment_score
+                },
             ] : [],
         },
         {
@@ -75,11 +80,18 @@ function MetricsGrid({ metrics }) {
             icon: 'cicd',
             stats: metrics.cicd ? [
                 { label: 'Success Rate', value: `${metrics.cicd.success_rate}%` },
-                { label: 'Avg Duration', value: `${metrics.cicd.avg_build_duration_mins}m` },
-                { label: 'Deploys/Day', value: metrics.cicd.deploys_per_day?.toFixed(1) },
+                { label: 'Avg Duration', value: `${metrics.cicd.avg_duration_minutes}m` },
+                { label: 'Runs/Day', value: (metrics.cicd.total_runs / 30).toFixed(1) },
             ] : [],
         },
     ];
+
+    const getScoreColor = (score) => {
+        if (!score) return 'inherit';
+        if (score >= 75) return '#4ade80'; // Green
+        if (score >= 50) return '#fbbf24'; // Orange
+        return '#f87171'; // Red
+    };
 
     return (
         <div className="card metrics-grid-container">
@@ -99,7 +111,12 @@ function MetricsGrid({ metrics }) {
                         <div className="metric-stats">
                             {card.stats.map((stat, i) => (
                                 <div key={i} className="metric-stat">
-                                    <span className="metric-stat-value">{stat.value}</span>
+                                    <span
+                                        className="metric-stat-value"
+                                        style={stat.isScore ? { color: getScoreColor(stat.score) } : {}}
+                                    >
+                                        {stat.value}
+                                    </span>
                                     <span className="metric-stat-label">{stat.label}</span>
                                 </div>
                             ))}

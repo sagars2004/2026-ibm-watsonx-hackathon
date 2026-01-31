@@ -1,25 +1,25 @@
+import { useMemo } from 'react';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import './TrendChart.css';
 
 function TrendChart({ data }) {
     // Generate simulated trend data based on bottleneck count
-    const generateTrendData = () => {
+    const trendData = useMemo(() => {
         const points = [];
         const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
         const baseScore = data?.length ? Math.max(30, 100 - data.length * 15) : 75;
 
         for (let i = 0; i < 7; i++) {
-            const variance = Math.floor(Math.random() * 15) - 7;
+            // Deterministic "randomness" based on index
+            const variance = ((i * 7 + 3) % 15) - 7;
             points.push({
                 day: days[i],
                 score: Math.max(0, Math.min(100, baseScore + variance + (i * 2))),
-                issues: Math.max(0, (data?.length || 3) - Math.floor(Math.random() * 3)),
+                issues: Math.max(0, (data?.length || 3)),
             });
         }
         return points;
-    };
-
-    const trendData = generateTrendData();
+    }, [data?.length]); // Only re-generate if number of bottlenecks changes
 
     const CustomTooltip = ({ active, payload, label }) => {
         if (active && payload && payload.length) {

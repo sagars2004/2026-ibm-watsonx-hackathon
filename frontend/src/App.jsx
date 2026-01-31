@@ -96,6 +96,22 @@ function App() {
         };
 
         loadInitialData();
+
+        // ⚡️ Auto-Polling for Live Demo Magic (Every 3 seconds)
+        const intervalId = setInterval(async () => {
+            await fetchMetrics();
+            // Also refresh quick analysis to update header stats
+            try {
+                const response = await fetch(`${API_BASE}/analyze/quick`);
+                if (response.ok) {
+                    const data = await response.json();
+                    setAnalysis(data);
+                    setLastUpdated(new Date());
+                }
+            } catch (e) { console.log("Polling error", e); }
+        }, 3000);
+
+        return () => clearInterval(intervalId); // Cleanup
     }, [fetchMetrics]);
 
     const formatTime = (date) => {

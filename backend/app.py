@@ -138,14 +138,14 @@ class CloudantDB:
 # Initialize DB
 db = CloudantDB()
 
-def get_mock_data(days=30):
+def get_mock_data(days=30, force_refresh=False):
     """Generate realistic mock data OR fetch from DB if available"""
     
-    # Try DB first
-    if db.enabled:
+    # Try DB first (unless forced refresh)
+    if db.enabled and not force_refresh:
         saved_data = db.get_latest_analysis()
         if saved_data:
-            print("📂 Loaded data from Cloudant")
+            # print("📂 Loaded data from Cloudant")
             return saved_data
 
     # Fallback to mock generation
@@ -619,6 +619,9 @@ def quick_analysis():
     data = get_mock_data(30)
     watsonx = get_watsonx_client()
     analysis = watsonx.analyze_bottlenecks(data)
+    # Ensure quick analysis includes recommendations to prevent UI flickering
+    recommendations = watsonx.generate_recommendations(analysis)
+    analysis["recommendations"] = recommendations
     return jsonify(analysis)
 
 
@@ -743,8 +746,10 @@ def get_orchestrate_skills():
 @app.route("/api/actions", methods=["POST"])
 def execute_action():
     """Execute a self-healing action"""
+    print(f"⚡️ ACTION REQUEST RECEIVED: {request.get_data(as_text=True)}")  # DEBUG LOG
     body = request.get_json() or {}
     action_type = body.get("type", "").lower()
+    print(f"👉 Action Type: {action_type}")
     
     # Get current state
     if db.enabled:
@@ -766,6 +771,8 @@ def execute_action():
             reviewers.sort(key=lambda x: x.get("review_count", 0), reverse=True)
             overloaded = reviewers[0]
             underloaded = reviewers[-1]
+            
+            print(f"DEBUG: Rebalancing {overloaded['name']} ({overloaded['review_count']}) -> {underloaded['name']}") # DEBUG
             
             # Transfer 30% of load
             transfer = int(overloaded["review_count"] * 0.3)
@@ -789,9 +796,11 @@ def execute_action():
         jira = data["jira"]["summary"]
         blocked = jira.get("blocked_count", 0)
         
+        print(f"DEBUG: Found {blocked} blocked tickets") # DEBUG
+        
         if blocked > 0:
             jira["blocked_count"] = 0
-            jira["in_progress"] += blocked
+            jira["in_progress"] = jira.get("in_progress", 0) + blocked
             # Improve velocity
             jira["velocity"] += int(blocked * 3)
             
@@ -834,6 +843,16 @@ def execute_action():
     })
 
 if __name__ == "__main__":
+    # 🔄 Auto-Reset DB for Demo Consistency
+    try:
+        if db.enabled:
+            print("🔄 Resetting Cloudant Database to Initial State (Blockers Active)...")
+            initial_data = generate_all_mock_data(30)
+            db.save_analysis(initial_data)
+            print("✅ Database Reset Complete")
+    except Exception as e:
+        print(f"⚠️ DB Reset Failed: {e}")
+
     port = int(os.getenv("PORT", 5001))
     debug = os.getenv("FLASK_DEBUG", "true").lower() == "true"
     

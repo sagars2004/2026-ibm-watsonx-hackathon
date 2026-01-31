@@ -233,8 +233,13 @@ Format as JSON with bottlenecks array, health_score (0-100), and summary."""
         penalty = sum(severity_weights.get(b["severity"], 5) for b in bottlenecks)
         health_score = max(0, min(100, 100 - penalty))
         
-        import random
-        trend_change = random.choice([-8, -5, -3, 2, 5])
+        # Deterministic trends based on health score
+        if health_score < 60:
+            trend_change = -5  # Declining
+        elif health_score > 85:
+            trend_change = 5   # Improving
+        else:
+            trend_change = 0   # Stable
         
         return {
             "analysis_id": f"analysis_{datetime.now().strftime('%Y%m%d_%H%M%S')}",
@@ -245,7 +250,7 @@ Format as JSON with bottlenecks array, health_score (0-100), and summary."""
             "trends": {
                 "health_score_change": trend_change,
                 "new_bottlenecks": len([b for b in bottlenecks if b["severity"] == "high"]),
-                "resolved_bottlenecks": random.randint(0, 2),
+                "resolved_bottlenecks": 0,
             },
             "summary": f"Detected {len(bottlenecks)} bottlenecks. Health score: {health_score}/100.",
         }
