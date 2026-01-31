@@ -19,6 +19,10 @@ class WatsonxClient:
         self.url = os.getenv("WATSONX_URL", "https://us-south.ml.cloud.ibm.com")
         self.use_mock = os.getenv("USE_MOCK_AI", "true").lower() == "true"
         
+        # Simple Cache for Demo Performance
+        self._cache = None
+        self._last_analysis_time = 0
+        
         if not self.use_mock and self.api_key and self.project_id:
             self._init_real_client()
     
@@ -42,10 +46,24 @@ class WatsonxClient:
     
     def analyze_bottlenecks(self, data: Dict[str, Any]) -> Dict[str, Any]:
         """Analyze workflow data to detect bottlenecks."""
+        
+        # ⚡️ Check Cache (60s)
+        import time
+        now = time.time()
+        if self._cache and (now - self._last_analysis_time < 60):
+            print(f"⚡️ [WatsonxClient] Serving cached analysis ({int(now - self._last_analysis_time)}s old)")
+            return self._cache
+
+        result = None
         if self.use_mock:
-            return self._mock_analysis(data)
+            result = self._mock_analysis(data)
         else:
-            return self._real_analysis(data)
+            result = self._real_analysis(data)
+            
+        # Store Cache
+        self._cache = result
+        self._last_analysis_time = now
+        return result
     
     def _real_analysis(self, data: Dict[str, Any]) -> Dict[str, Any]:
         """Perform real analysis using watsonx.ai."""
@@ -193,185 +211,115 @@ Output raw JSON only. Do not use Markdown code blocks."""
         }
 
     def _mock_analysis(self, data: Dict[str, Any]) -> Dict[str, Any]:
-        """Generate mock analysis results based on the data patterns."""
+        """Generate mock analysis results with Specific Narratives for Demo."""
         bottlenecks = []
         
-        # Analyze GitHub data for PR review bottleneck
-        github = data.get("github", {})
-        reviewer_stats = github.get("reviewer_stats", {})
-        if reviewer_stats:
-            top_reviewer = max(reviewer_stats.items(), key=lambda x: x[1].get("percentage", 0))
-            reviewer_id, stats = top_reviewer
-            if stats.get("percentage", 0) > 50:
-                bottlenecks.append({
-                    "type": "single_point_of_failure",
-                    "severity": "high",
-                    "title": "PR Review Concentration",
-                    "description": f"{stats['member']['name']} approved {stats['percentage']}% of all PRs last month",
-                    "impact": "Team velocity is at risk if this person is unavailable.",
-                    "recommendation": "Train 2 more developers on code review best practices",
-                    "icon": "🚨",
-                    "metric_value": f"{stats['percentage']}%",
-                    "metric_label": "PRs reviewed by one person",
-                })
+        # 1. PR Bottleneck: Emma Wilson is overloaded
+        bottlenecks.append({
+            "type": "single_point_of_failure",
+            "severity": "high",
+            "title": "Review Bottleneck: Emma Wilson",
+            "description": "Emma Wilson is reviewing 68% of all PRs. This is a critical velocity risk.",
+            "impact": "Team merges are blocked when Emma is unavailable.",
+            "recommendation": "Distribute review load to Alex and Sarah immediately.",
+            "icon": "🚨",
+            "metric_value": "68%",
+            "metric_label": "review share",
+        })
         
-        # Analyze deploy delays
-        github_summary = github.get("summary", {})
-        avg_merge_delay = github_summary.get("avg_merge_delay_hours", 0)
-        if avg_merge_delay > 8:
-            bottlenecks.append({
-                "type": "hidden_delay",
-                "severity": "medium",
-                "title": "Deploy Queue Bottleneck",
-                "description": f"Average time from PR-approved to deployed: {avg_merge_delay} hours",
-                "impact": "Features sit idle waiting for deployment",
-                "recommendation": "Automate deploy pipeline to run immediately after approval",
-                "icon": "⏰",
-                "metric_value": f"{avg_merge_delay}h",
-                "metric_label": "avg deploy delay",
-            })
+        # 2. Deployment Delay
+        bottlenecks.append({
+            "type": "hidden_delay",
+            "severity": "medium",
+            "title": "Stagnant Deploys",
+            "description": "Features sit in 'Approved' state for avg 14 hours before merge.",
+            "impact": "Slow feedback loop from QA.",
+            "recommendation": "Enable auto-merge for approved low-risk PRs.",
+            "icon": "⏰",
+            "metric_value": "14h",
+            "metric_label": "avg merge delay",
+        })
         
-        # Analyze CI/CD flakiness
-        cicd = data.get("cicd", {})
-        cicd_summary = cicd.get("summary", {})
-        failure_rate = cicd_summary.get("failure_rate", 0)
-        flaky_stage = cicd_summary.get("flaky_stage")
-        if failure_rate > 25 and flaky_stage:
-            bottlenecks.append({
-                "type": "flaky_process",
-                "severity": "high",
-                "title": "Flaky CI/CD Pipeline",
-                "description": f"'{flaky_stage}' stage fails {failure_rate}% of the time",
-                "impact": "Developers waste time re-running builds",
-                "recommendation": f"Investigate and fix flaky tests in {flaky_stage}",
-                "icon": "🔄",
-                "metric_value": f"{failure_rate}%",
-                "metric_label": "pipeline failure rate",
-            })
+        # 3. Flaky Tests
+        bottlenecks.append({
+            "type": "flaky_process",
+            "severity": "high",
+            "title": "Flaky CI: E2E Payments",
+            "description": "'e2e-payment-tests' stage failed 12 times today (35% rate).",
+            "impact": "Developers are re-running builds constantly.",
+            "recommendation": "Quarantine 'TestPaymentFlow.spec.js' and fix race condition.",
+            "icon": "🔄",
+            "metric_value": "35%",
+            "metric_label": "failure rate",
+        })
         
-        # Analyze knowledge silos
-        knowledge_silos = github.get("knowledge_silos", [])
-        critical_silos = [s for s in knowledge_silos if s.get("is_silo") and s.get("area") in ["auth", "payments", "database"]]
-        if critical_silos:
-            silo = critical_silos[0]
-            bottlenecks.append({
-                "type": "knowledge_silo",
-                "severity": "medium",
-                "title": f"Knowledge Silo: {silo['area'].title()}",
-                "description": f"Only {silo['contributor_count']} people have touched {silo['area']} code",
-                "impact": f"Critical system at risk if these people leave",
-                "recommendation": f"Schedule knowledge-sharing sessions for {silo['area']}",
-                "icon": "🔐",
-                "metric_value": str(silo['contributor_count']),
-                "metric_label": "contributors (bus factor)",
-            })
+        # 4. Knowledge Silo
+        bottlenecks.append({
+            "type": "knowledge_silo",
+            "severity": "medium",
+            "title": "Risk: Auth Service",
+            "description": "Alex Rivera is the only contributor to 'auth-service' in 6 months.",
+            "impact": "Bus factor of 1 on critical security component.",
+            "recommendation": "Schedule Deep Dive session with Alex for the team.",
+            "icon": "🔐",
+            "metric_value": "1",
+            "metric_label": "contributor",
+        })
+
+        # 5. Meeting Overload
+        bottlenecks.append({
+            "type": "meeting_overload",
+            "severity": "low",
+            "title": "Meeting Heavy: David Kim",
+            "description": "David Kim spent 24 hours in meetings this week (60% load).",
+            "impact": "Zero coding time availble for Tech Lead.",
+            "recommendation": "Decline non-critical syncs.",
+            "icon": "💬",
+            "metric_value": "60%",
+            "metric_label": "meeting load",
+        })
         
-        # Analyze meeting overload
-        slack = data.get("slack", {})
-        slack_summary = slack.get("summary", {})
-        meeting_pct = slack_summary.get("meeting_percentage", 0)
-        if meeting_pct > 25:
-            bottlenecks.append({
-                "type": "meeting_overload",
-                "severity": "medium" if meeting_pct < 35 else "high",
-                "title": "Excessive Meeting Time",
-                "description": f"Team spent {meeting_pct}% of time in meetings (healthy target: <20%)",
-                "impact": "Reduced focus time for deep work",
-                "recommendation": "Audit recurring meetings, implement 'No Meeting Wednesdays'",
-                "icon": "💬",
-                "metric_value": f"{meeting_pct}%",
-                "metric_label": "time in meetings",
-            })
+        # Dynamic Scoring for Demo (Responsive to Actions)
+        # Base: 58 (Warning)
+        # If blockers cleared -> +27 points -> 85 (Healthy)
+        jira_summary = data.get("jira", {}).get("summary", {})
+        blocked = jira_summary.get("blocked_count", 0)
         
-        # Analyze blocked tickets
-        jira = data.get("jira", {})
-        jira_summary = jira.get("summary", {})
-        blocked_count = jira_summary.get("blocked_count", 0)
+        health_score = 58
+        trend_change = -12
         
-        if blocked_count > 0:
-            severity = "high" if blocked_count > 10 else ("medium" if blocked_count > 3 else "low")
+        if blocked == 0:
+            health_score = 85 # Healthy!
+            trend_change = 27
+            bottlenecks = [b for b in bottlenecks if b["type"] != "blocked_work"] # Remove blocker card
             
-            bottlenecks.append({
-                "type": "blocked_work",
-                "severity": severity,
-                "title": "Stalled Tickets in Review",
-                "description": f"{blocked_count} tickets blocked waiting for review",
-                "impact": "Sprint velocity impacted",
-                "recommendation": "Set up daily review rotation and max 24-hour review SLA",
-                "icon": "🚫",
-                "metric_value": str(blocked_count),
-                "metric_label": "blocked tickets",
-            })
+        elif blocked < 5:
+            health_score = 72
+            trend_change = 14
         
-        # Calculate health score
-        # For Demo Drama: Make Blockers the dominant factor
-        penalty = 0
-        for b in bottlenecks:
-            if b["type"] == "blocked_work":
-                # Linear penalty: 2.5 points per blocked ticket
-                # 12 tickets = 30 point penalty
-                # 0 tickets = 0 point penalty
-                count = int(b["metric_value"])
-                penalty += count * 2.5
-            else:
-                # Reduced background penalty (5 pts) so other issues don't
-                # prevent us from reaching "Green" when blockers are fixed
-                penalty += 5
-                
-        health_score = int(max(0, min(100, 100 - penalty)))
-        
-        # Deterministic trends based on health score
-        if health_score < 60:
-            trend_change = -5  # Declining
-        elif health_score > 85:
-            trend_change = 5   # Improving
-        else:
-            trend_change = 0   # Stable
-        
-        # Predictive Modeling (Velocity & Risk)
-        # -------------------------------------
-        velocity = jira.get("summary", {}).get("velocity", 20)
-        total_points = jira.get("summary", {}).get("total_tickets", 50) * 3 # Estimate
-        completed_points = velocity # Assuming velocity = completed in this period
-        remaining_points = max(0, total_points - completed_points)
-        
-        # Velocity Modifiers
-        meeting_impact = max(0, (meeting_pct - 20) / 100) # -1% velocity for every 1% meeting over 20%
-        sentiment_impact = max(0, (80 - 85) / 100) # (Base sentiment 85). We should pass actual sentiment here.
-        
-        # Mock sentiment fetch (since it was calculated in generate_slack_data but not passed deep here easily)
-        # We'll rely on the health_score as a proxy for team efficiency
-        efficiency_factor = health_score / 100.0
-        
-        projected_velocity = velocity * efficiency_factor
-        
-        if projected_velocity > 0:
-            sprints_needed = remaining_points / projected_velocity
-            days_to_complete = int(sprints_needed * 14) # 2 week sprints
-        else:
-            days_to_complete = 999
-            
-        risk_level = "low"
-        if days_to_complete > 30: risk_level = "high"
-        elif days_to_complete > 14: risk_level = "medium"
+        # Predictions
+        projected_velocity = 14.5
+        velocity = 20
+        days_to_complete = 42
+        risk_level = "high"
 
         return {
             "analysis_id": f"analysis_{datetime.now().strftime('%Y%m%d_%H%M%S')}",
             "timestamp": datetime.now().isoformat(),
             "health_score": health_score,
-            "health_status": "healthy" if health_score >= 80 else ("warning" if health_score >= 60 else "critical"),
+            "health_status": "warning",
             "bottlenecks": sorted(bottlenecks, key=lambda x: {"high": 0, "medium": 1, "low": 2}.get(x["severity"], 3)),
             "trends": {
                 "health_score_change": trend_change,
-                "new_bottlenecks": len([b for b in bottlenecks if b["severity"] == "high"]),
+                "new_bottlenecks": 2,
                 "resolved_bottlenecks": 0,
             },
             "predictions": {
-                "projected_velocity": round(projected_velocity, 1),
+                "projected_velocity": projected_velocity,
                 "original_velocity": velocity,
                 "days_to_completion": days_to_complete,
                 "risk_level": risk_level,
-                "forecast": f"Projected to finish in {days_to_complete} days ({'On Track' if risk_level == 'low' else 'Delay Risk'})"
+                "forecast": f"Projected to finish in {days_to_complete} days (Delay Risk)"
             },
             "summary": f"Detected {len(bottlenecks)} bottlenecks. Health score: {health_score}/100.",
         }

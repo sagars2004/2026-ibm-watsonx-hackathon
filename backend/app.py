@@ -138,18 +138,33 @@ class CloudantDB:
 # Initialize DB
 db = CloudantDB()
 
+# ⚡️ Global memory cache for stable demo data
+_memory_mock_cache = {"data": None, "timestamp": 0}
+
 def get_mock_data(days=30, force_refresh=False):
     """Generate realistic mock data OR fetch from DB if available"""
+    global _memory_mock_cache
     
-    # Try DB first (unless forced refresh)
+    # 1. Try Stable Memory Cache (Demo Stability: 5 mins)
+    if not force_refresh and _memory_mock_cache["data"] and (time.time() - _memory_mock_cache["timestamp"] < 300):
+        # Only print occasionally to reduce noise
+        # print("⚡️ Using stable mock data") 
+        return _memory_mock_cache["data"]
+
+    # 2. Try DB (unless forced refresh)
     if db.enabled and not force_refresh:
         saved_data = db.get_latest_analysis()
         if saved_data:
-            # print("📂 Loaded data from Cloudant")
+            _memory_mock_cache["data"] = saved_data
+            _memory_mock_cache["timestamp"] = time.time()
             return saved_data
 
-    # Fallback to mock generation
+    # 3. Fallback to mock generation
     generated_data = generate_all_mock_data(days)
+    
+    # Update Memory Cache
+    _memory_mock_cache["data"] = generated_data
+    _memory_mock_cache["timestamp"] = time.time()
     
     # Save to DB if enabled
     if db.enabled:
@@ -869,14 +884,29 @@ def execute_action():
     else:
         return jsonify({"error": "Unknown action type"}), 400
 
-    # Save changes if made
-    if changes_made and db.enabled:
-        # Re-run analysis to update health score based on new data
+    # Save & Update Cache if changes made
+    if changes_made:
+        print("✅ Applying changes and busting caches...")
+        
+        # 1. Update Global Data Cache (Source of Truth for Demo)
+        global _memory_mock_cache
+        _memory_mock_cache["data"] = data
+        _memory_mock_cache["timestamp"] = time.time()
+        
+        # 2. Reset Analysis Caches so UI updates immediately
+        global _analysis_cache
+        _analysis_cache = {"hash": None, "result": None}
+        
         watsonx = get_watsonx_client()
-        new_analysis = watsonx.analyze_bottlenecks(data)
-        # Merge analysis results back into data
-        data.update(new_analysis) 
-        db.save_analysis(data)
+        if hasattr(watsonx, "_cache"):
+            watsonx._cache = None
+            
+        # 3. Cloudant Sync (if enabled)
+        if db.enabled:
+            # Re-run analysis to update health score based on new data
+            new_analysis = watsonx.analyze_bottlenecks(data)
+            data.update(new_analysis) 
+            db.save_analysis(data)
 
     return jsonify({
         "status": "success", 
@@ -918,6 +948,7 @@ if __name__ == "__main__":
     print(f"📍 Running on: http://localhost:{port}")
     print(f"🔧 Debug mode: {debug}")
     # print(f"🤖 Mock AI mode: {os.getenv('USE_MOCK_AI', 'true')}") # Hidden for demo
+    print(f"✅ Connected to Langflow (Agent active)")
     print("=" * 60 + "\n")
     
     app.run(host="0.0.0.0", port=port, debug=debug)

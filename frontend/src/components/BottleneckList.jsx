@@ -65,32 +65,33 @@ function BottleneckList({ bottlenecks }) {
     };
 
     return (
-        <div className="card bottleneck-list">
+        <div className="card bottleneck-list-card" style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
             <div className="card-header">
                 <h3 className="card-title">Detected Issues</h3>
                 <span className="badge">{bottlenecks.length} found</span>
             </div>
 
-            <div className="bottleneck-items">
+            <div className="bottleneck-list">
                 {bottlenecks.map((bottleneck, index) => (
-                    <div key={index} className="bottleneck-item">
-                        <div className={`bottleneck-icon ${getSeverityClass(bottleneck.severity)}`}>
+                    <div key={index} className={`bottleneck-item ${bottleneck.severity}`}>
+                        <div className="bottleneck-icon">
                             <TypeIcon type={bottleneck.type} />
                         </div>
                         <div className="bottleneck-content">
                             <div className="bottleneck-header">
                                 <h4 className="bottleneck-title">{bottleneck.title}</h4>
-                                <span className={`severity-badge ${getSeverityClass(bottleneck.severity)}`}>
+                                <span className="bottleneck-severity">
                                     {bottleneck.severity}
                                 </span>
                             </div>
-                            <p className="bottleneck-description">{bottleneck.description}</p>
                             {bottleneck.metric_value && (
-                                <div className="bottleneck-metric">
-                                    <span className="metric-value">{bottleneck.metric_value}</span>
-                                    <span className="metric-label">{bottleneck.metric_label}</span>
+                                <div className="bottleneck-meta" style={{ marginBottom: '4px', color: 'var(--text-primary)', fontSize: '0.8rem' }}>
+                                    Impact: <strong>{bottleneck.metric_value}</strong>
                                 </div>
                             )}
+                            <p className="bottleneck-description" style={{ fontSize: '0.75rem', margin: 0 }}>
+                                {bottleneck.description}
+                            </p>
                         </div>
                     </div>
                 ))}

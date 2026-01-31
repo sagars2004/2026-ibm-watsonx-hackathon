@@ -1,0 +1,125 @@
+.bottleneck-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    /* Match Recommendation gap */
+    overflow-y: auto;
+    height: 400px;
+    /* Fixed height to match RecommendationPanel */
+}
+
+.bottleneck-item {
+    display: flex;
+    gap: var(--space-4);
+    padding: var(--space-4);
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    transition: all var(--transition-fast);
+}
+
+.bottleneck-item:hover {
+    border-color: var(--border-light);
+}
+
+/* Match 'priority-indicator' style from Recommendations */
+.bottleneck-icon {
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-sm);
+    /* Square with rounded corners, not circle */
+    background: var(--bg-surface);
+    color: var(--text-secondary);
+}
+
+/* Dynamic background based on severity (using parent class if possible, or fallback) */
+.bottleneck-item.critical .bottleneck-icon {
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--status-error);
+}
+
+.bottleneck-item.high .bottleneck-icon {
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--status-error);
+}
+
+.bottleneck-item.medium .bottleneck-icon {
+    background: rgba(234, 179, 8, 0.1);
+    color: var(--status-warning);
+}
+
+.bottleneck-item.low .bottleneck-icon {
+    background: rgba(59, 130, 246, 0.1);
+    color: var(--status-info);
+}
+
+.bottleneck-icon svg {
+    width: 16px !important;
+    height: 16px !important;
+    stroke-width: 2px;
+}
+
+.bottleneck-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.bottleneck-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: var(--space-1);
+}
+
+.bottleneck-title {
+    font-size: 0.9375rem;
+    /* Match Recommendation Title */
+    font-weight: 500;
+    color: var(--text-primary);
+    line-height: 1.4;
+}
+
+.bottleneck-severity {
+    align-self: flex-start;
+    padding: var(--space-1) var(--space-2);
+    border-radius: var(--radius-sm);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    flex-shrink: 0;
+}
+
+.bottleneck-item.critical .bottleneck-severity,
+.bottleneck-item.high .bottleneck-severity {
+    background: rgba(239, 68, 68, 0.15);
+    color: var(--status-error);
+}
+
+.bottleneck-item.medium .bottleneck-severity {
+    background: rgba(234, 179, 8, 0.15);
+    color: var(--status-warning);
+}
+
+.bottleneck-item.low .bottleneck-severity {
+    background: rgba(59, 130, 246, 0.15);
+    color: var(--status-info);
+}
+
+.bottleneck-description {
+    font-size: 0.8125rem;
+    /* Match Action Item text size approx */
+    color: var(--text-secondary);
+    line-height: 1.5;
+    margin-bottom: var(--space-2);
+}
+
+.bottleneck-meta {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+}

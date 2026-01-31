@@ -199,6 +199,23 @@ body::before {
     border-color: var(--border-medium);
 }
 
+/* ❄️ Frosted Glass Button */
+.btn-frosted {
+    background: rgba(30, 38, 50, 0.4);
+    backdrop-filter: blur(var(--blur-amount));
+    -webkit-backdrop-filter: blur(var(--blur-amount));
+    color: var(--text-primary);
+    border: 1px solid var(--border-light);
+    box-shadow: var(--shadow-sm);
+}
+
+.btn-frosted:hover {
+    background: rgba(50, 62, 80, 0.6);
+    border-color: var(--accent-blue);
+    box-shadow: 0 0 15px rgba(59, 130, 246, 0.2);
+    transform: translateY(-1px);
+}
+
 .btn:disabled {
     opacity: 0.5;
     cursor: not-allowed;

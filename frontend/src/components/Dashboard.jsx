@@ -5,7 +5,7 @@ import MetricsGrid from './MetricsGrid';
 import RecommendationPanel from './RecommendationPanel';
 import TrendChart from './TrendChart';
 
-function Dashboard({ analysis, metrics }) {
+function Dashboard({ analysis, metrics, onRunAnalysis, isLoading }) {
     if (!analysis && !metrics) {
         return (
             <div className="empty-state">
@@ -15,6 +15,14 @@ function Dashboard({ analysis, metrics }) {
                 </svg>
                 <h3>No Analysis Data</h3>
                 <p>Click "Run Analysis" to detect bottlenecks in your workflow</p>
+                <button
+                    className="btn btn-frosted"
+                    onClick={onRunAnalysis}
+                    disabled={isLoading}
+                    style={{ marginTop: '1rem' }}
+                >
+                    {isLoading ? 'analyzing...' : 'Run Analysis'}
+                </button>
             </div>
         );
     }
@@ -24,10 +32,30 @@ function Dashboard({ analysis, metrics }) {
 
     return (
         <div className="dashboard">
-            <div style={{ marginBottom: '1rem' }}>
+            <div style={{ marginBottom: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <h2 style={{ fontSize: '1.5rem', fontWeight: '500', color: 'var(--text-primary)' }}>
                     Hello, Sagar... Good luck in the 2026 IBM AI Demystified Hackathon!
                 </h2>
+                <button
+                    className="btn btn-frosted"
+                    onClick={onRunAnalysis}
+                    disabled={isLoading}
+                >
+                    {isLoading ? (
+                        <>
+                            <span className="loading-spinner"></span>
+                            Running...
+                        </>
+                    ) : (
+                        <>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="16" height="16" style={{ marginRight: '8px' }}>
+                                <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8" />
+                                <path d="M21 3v5h-5" />
+                            </svg>
+                            Run Analysis
+                        </>
+                    )}
+                </button>
             </div>
 
             <div className="dashboard-row dashboard-top">

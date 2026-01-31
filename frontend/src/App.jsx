@@ -97,7 +97,7 @@ function App() {
 
         loadInitialData();
 
-        // ⚡️ Auto-Polling for Live Demo Magic (Every 3 seconds)
+        // ⚡️ Auto-Polling (15s) to avoid congestion with Live AI
         const intervalId = setInterval(async () => {
             await fetchMetrics();
             // Also refresh quick analysis to update header stats
@@ -109,7 +109,7 @@ function App() {
                     setLastUpdated(new Date());
                 }
             } catch (e) { console.log("Polling error", e); }
-        }, 3000);
+        }, 15000);
 
         return () => clearInterval(intervalId); // Cleanup
     }, [fetchMetrics]);
@@ -124,9 +124,9 @@ function App() {
 
     return (
         <div className="app">
-            <header className="header">
-                <div className="header-logo">
-                    <div className="logo-icon">
+            <header className="header" style={{ justifyContent: 'flex-end', paddingRight: '2rem' }}>
+                <div className="header-logo" style={{ flexDirection: 'row-reverse', textAlign: 'right' }}>
+                    <div className="logo-icon" style={{ marginLeft: '1rem', marginRight: 0 }}>
                         <Icons.Search />
                     </div>
                     <div>
@@ -137,25 +137,6 @@ function App() {
                                 : 'Awaiting analysis'}
                         </p>
                     </div>
-                </div>
-                <div className="header-actions">
-                    <button
-                        className="btn btn-primary"
-                        onClick={runAnalysis}
-                        disabled={isLoading}
-                    >
-                        {isLoading ? (
-                            <>
-                                <span className="loading-spinner"></span>
-                                Analyzing
-                            </>
-                        ) : (
-                            <>
-                                <Icons.Refresh />
-                                Run Analysis
-                            </>
-                        )}
-                    </button>
                 </div>
             </header>
 
@@ -175,7 +156,12 @@ function App() {
             {isLoading && <LoadingOverlay />}
 
             <main>
-                <Dashboard analysis={analysis} metrics={metrics} />
+                <Dashboard
+                    analysis={analysis}
+                    metrics={metrics}
+                    onRunAnalysis={runAnalysis}
+                    isLoading={isLoading}
+                />
             </main>
 
             <footer className="footer">

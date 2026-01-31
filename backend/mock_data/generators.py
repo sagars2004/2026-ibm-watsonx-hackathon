@@ -7,6 +7,11 @@ Generates realistic mock data that demonstrates bottleneck patterns:
 - Flaky processes (CI/CD failures)
 - Knowledge silos (only 2 people touching critical code)
 - Meeting overload (34% of time in meetings)
+
+COMPLIANCE NOTE:
+All data generated herein is 100% synthetic.
+Names, messages, and metrics are fictional.
+No real PII or confidential client data is used.
 """
 
 import random
