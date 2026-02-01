@@ -1,4 +1,4 @@
-# 🕵️‍♂️ Silent Bottleneck Detector 
+# Silent Bottleneck Detector 
 ### *IBM watsonx Hackathon 2026 Submission*
 
 > **"We don't just find bottlenecks. We fix them."**
@@ -7,17 +7,17 @@ The **Silent Bottleneck Detector** is an AI-powered system that autonomously ide
 
 ---
 
-## 🚀 Key Features
+## Key Features
 
-*   **🧠 Cognitive Analysis:** Powered by **IBM watsonx.ai (Granite 4.0)** to detect subtle patterns like "Knowledge Silos" or "Meeting Overload" that regular metrics miss.
-*   **🤖 Autonomous Agent:** A custom **Langflow** agent that can rebalance workloads and unblock tickets via chat command.
-*   **⚡️ Real-Timestamp Self-Healing:** Actions taken by the agent (e.g., "Resolve Blockers") are reflected on the dashboard in < 2 seconds.
-*   **🕸️ Enterprise Orchestration:** Integrated with **IBM watsonx Orchestrate** to enforce company policies and automate recurring health checks.
-*   **🎨 Premium Operations Center:** A modern UI design that brings a futuristic feel to engineering management.
+*   **Cognitive Analysis:** Powered by **IBM watsonx.ai (Granite 4.0)** to detect subtle patterns like "Knowledge Silos" or "Meeting Overload" that regular metrics miss.
+*   **Autonomous Agent:** A custom **Langflow** agent that can rebalance workloads and unblock tickets via chat command.
+*   **Real-Timestamp Self-Healing:** Actions taken by the agent (e.g., "Resolve Blockers") are reflected on the dashboard in < 2 seconds.
+*   **Enterprise Orchestration:** Integrated with **IBM watsonx Orchestrate** to enforce company policies and automate recurring health checks.
+*   **Premium Operations Center:** A modern UI design that brings a futuristic feel to engineering management.
 
 ---
 
-## 🏗️ Architecture
+## Architecture
 
 Our "Dual-Brain" architecture combines local responsiveness with cloud power:
 
@@ -30,7 +30,7 @@ Our "Dual-Brain" architecture combines local responsiveness with cloud power:
 
 ---
 
-## 🛠️ Quick Start
+## Quick Start
 
 ### Prerequisites
 *   Node.js v16+
@@ -66,7 +66,7 @@ Our agent logic is defined in `docs/advanced_langflow_tools.py`.
 
 ---
 
-## 📂 Project Structure
+## Project Structure
 
 *   `/backend` - Flask API, Watsonx Client, and Self-Healing Logic.
 *   `/frontend` - React App with Frosted UI and Langflow Widget integration.
@@ -74,7 +74,7 @@ Our agent logic is defined in `docs/advanced_langflow_tools.py`.
 
 ---
 
-## 🌟 Technologies Used
+## Technologies Used
 
 *   **IBM watsonx Orchestrate agent**
 *   **IBM watsonx.ai**
