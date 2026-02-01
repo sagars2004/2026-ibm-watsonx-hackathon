@@ -109,7 +109,7 @@ function App() {
                     setLastUpdated(new Date());
                 }
             } catch (e) { console.log("Polling error", e); }
-        }, 15000);
+        }, 2000);
 
         return () => clearInterval(intervalId); // Cleanup
     }, [fetchMetrics]);

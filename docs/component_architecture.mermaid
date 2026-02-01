@@ -14,6 +14,7 @@ classDiagram
         +React App
         +Dashboard UI
         +Auto-Poller
+        +Chat Widget (Embedded)
     }
 
     class Backend {
@@ -32,6 +33,11 @@ classDiagram
         +IBM Granite Model
         +Generative Analysis
     }
+    
+    class Langflow {
+        +Agent Logic
+        +Custom Tools
+    }
 
     User --> Orchestrate : "Chat / Commands"
     User --> Frontend : "Views Dashboard"
@@ -39,3 +45,8 @@ classDiagram
     Frontend --> Backend : "Fetch Metrics (JSON)"
     Backend --> CloudantDB : "Read/Write State"
     Backend --> WatsonxAI : "Prompt for Analysis"
+    
+    %% New Additions
+    Frontend --> Langflow : "Embeds Widget"
+    Langflow --> Backend : "Execute Actions"
+    Langflow --> WatsonxAI : "LLM Reasoning"

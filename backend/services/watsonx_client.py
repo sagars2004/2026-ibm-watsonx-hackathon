@@ -285,17 +285,24 @@ Output raw JSON only. Do not use Markdown code blocks."""
         jira_summary = data.get("jira", {}).get("summary", {})
         blocked = jira_summary.get("blocked_count", 0)
         
-        health_score = 58
-        trend_change = -12
+        # Dynamic Health Score Calculation
+        # Linear Formula: Start at 95, lose 4 points per blocked ticket (Punitive).
+        # Target: Start < 50. 
+        # Example: 12 blocked -> 95 - 48 = 47 (Critical)
+        # Example: 7 blocked -> 95 - 28 = 67 (Warning)
+        # Example: 2 blocked -> 95 - 8 = 87 (Green)
         
-        if blocked == 0:
-            health_score = 85 # Healthy!
+        calculated_score = 95 - (blocked * 4)
+        health_score = max(30, calculated_score) # Lower floor to 30
+        
+        if health_score >= 80:
             trend_change = 27
-            bottlenecks = [b for b in bottlenecks if b["type"] != "blocked_work"] # Remove blocker card
-            
-        elif blocked < 5:
-            health_score = 72
-            trend_change = 14
+            # Remove blocker card from list if healthy
+            bottlenecks = [b for b in bottlenecks if b["type"] != "blocked_work"]
+        elif health_score >= 70:
+             trend_change = 14
+        else:
+             trend_change = -12
         
         # Predictions
         projected_velocity = 14.5

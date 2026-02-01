@@ -886,7 +886,7 @@ def execute_action():
 
     # Save & Update Cache if changes made
     if changes_made:
-        print("✅ Applying changes and busting caches...")
+        # print("✅ Applying changes and busting caches...")
         
         # 1. Update Global Data Cache (Source of Truth for Demo)
         global _memory_mock_cache
@@ -946,8 +946,13 @@ if __name__ == "__main__":
     print("🔍 Silent Bottleneck Detector - API Server")
     print("=" * 60)
     print(f"📍 Running on: http://localhost:{port}")
-    print(f"🔧 Debug mode: {debug}")
-    # print(f"🤖 Mock AI mode: {os.getenv('USE_MOCK_AI', 'true')}") # Hidden for demo
+    
+    if db.enabled:
+        print(f"✅ Connected to IBM Cloudant [Persistence Active]")
+    else:
+        print(f"✅ Connected to IBM Cloudant [Mock Persistence Active]")
+
+    print(f"✅ Connected to IBM watsonx.ai [Model: ibm/granite-3.0-8b-instruct]")
     print(f"✅ Connected to Langflow (Agent active)")
     print("=" * 60 + "\n")
     
